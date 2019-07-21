@@ -20,6 +20,7 @@ export class ConceptsPage implements OnInit {
 
   ngOnInit() {
     this.concepts$ = this.conceptSercice.loadAllConcepts();
+    this.concepts$.subscribe();
 
     this.inspectedConcept$ = this.route.paramMap.pipe(switchMap(paramMap => {
       const conceptId = paramMap.get('conceptId');
