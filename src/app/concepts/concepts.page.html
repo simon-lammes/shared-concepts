@@ -1,0 +1,13 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ title$ | async }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item [routerLink]="['/concepts', concept.id]" *ngFor="let concept of showConcepts$ | async">
+      <ion-label>{{ concept.title }}</ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
