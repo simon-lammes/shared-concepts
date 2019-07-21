@@ -11,3 +11,7 @@
     </ion-item>
   </ion-list>
 </ion-content>
+
+<ion-footer *ngIf="inspectedConcept$ | async as inspectedConcept">
+  <ion-button [routerLink]="['/exercise', inspectedConcept.id]" expand="block" size="large">Study {{ inspectedConcept.title }}</ion-button>
+</ion-footer>
