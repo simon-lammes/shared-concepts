@@ -28,7 +28,7 @@ export class ExercisePage implements OnInit {
         throw new Error('Missing concept id');
       }
       return this.exerciseService.loadAllExercisesForConceptId(conceptId);
-    }));
+    }), untilDestroyed(this));
   }
 
 }
