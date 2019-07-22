@@ -45,9 +45,12 @@ export class AuthPage implements OnInit, OnDestroy {
 
   onLoginSuccessful() {
     this.router.navigateByUrl('/concepts');
+    // The redirectUrl has to be stored in local storage.
+    // Otherwise it would get lost during authentication using Google
+    const redirectUrl = localStorage.getItem('redirectUrl');
     // Angular cannot know by itself that this method changes the view, 
     // so we need to execute it inside the angular zone
-    this.ngZone.run(() => this.router.navigateByUrl('/concepts'));
+    this.ngZone.run(() => this.router.navigateByUrl(redirectUrl));
   }
 
 }

@@ -15,19 +15,23 @@ export class AuthGuard implements CanLoad, CanActivate {
   ){}
 
   canLoad(route: Route, segments: UrlSegment[]): Observable<boolean> | Promise<boolean> | boolean {
-    return this.isAuthenticated();
+    const url = '/' + segments.join('/');
+    return this.isAuthenticated(url);
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
-    return this.isAuthenticated();
+    return this.isAuthenticated(state.url);
   }
 
-  isAuthenticated(): Observable<boolean> {
+  isAuthenticated(redirectUrl: string): Observable<boolean> {
     return this.afService.authState.pipe(map(user => {
       return !!user;
     }),
     tap(isAuthenticated => {
       if (!isAuthenticated) {
+        // The redirectUrl has to be stored in local storage.
+        // Otherwise it would get lost during authentication using Google
+        localStorage.setItem('redirectUrl', redirectUrl);
         this.router.navigateByUrl('/auth')
       }
     }), first());

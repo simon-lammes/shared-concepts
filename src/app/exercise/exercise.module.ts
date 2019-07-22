@@ -11,15 +11,11 @@ import { ExercisePage } from './exercise.page';
 const routes: Routes = [
   {
     path: '',
-    component: ExercisePage,
-    canLoad: [AuthGuard],
-    canActivate: [AuthGuard]
+    component: ExercisePage
   },
   {
     path: ':conceptId',
-    component: ExercisePage,
-    canLoad: [AuthGuard],
-    canActivate: [AuthGuard]
+    component: ExercisePage
   }
 ];
 
