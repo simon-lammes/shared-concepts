@@ -5,7 +5,7 @@ This project is intended to be an adaptive learning tool with the main goal of t
 ## How Reality is modeled in this project
 
 Reality | Model
---- | --- | ---
+--- | --- 
 Concept | Every concept can be the foundation of multiple other concepts. For example integrals are important for many different mathmetical and physical concepts.
 Exercise | Every concept could potentially contain multiple exercises. Every exercise should only be related to its most specific concept. For example, an exercise about _integration by substitution_ is only directed to the concept of _integration by substitution_ and not to the concepts _integration_ (in general) or _math._ Top level concepts like biology, physics and computer science should not have any exercises directly associated to them because each exercise should be related to a more specific concept.
 
