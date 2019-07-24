@@ -31,7 +31,7 @@ export class AuthGuard implements CanLoad, CanActivate {
       if (!isAuthenticated) {
         // The redirectUrl has to be stored in local storage.
         // Otherwise it would get lost during authentication using Google
-        localStorage.setItem('redirectUrl', redirectUrl);
+        sessionStorage.setItem('redirectUrl', redirectUrl);
         this.router.navigateByUrl('/auth')
       }
     }), first());
