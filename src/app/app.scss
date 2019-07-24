@@ -6,3 +6,11 @@
 // and used throughout the application.
 
 @import '~firebaseui/dist/firebaseui.css';
+
+ion-thumbnail {
+    --border-radius: 3px;
+}
+
+ion-toolbar {
+    margin: 1px;
+}
