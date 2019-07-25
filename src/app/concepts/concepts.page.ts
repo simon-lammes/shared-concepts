@@ -3,8 +3,9 @@ import { Observable, of } from 'rxjs';
 import { ConceptsService } from './concepts.service';
 import { Concept } from './concept.model';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { untilDestroyed } from 'ngx-take-until-destroy';
+import { UserService } from '../user/user.service';
 
 @Component({
   selector: 'app-concepts',
@@ -12,13 +13,18 @@ import { untilDestroyed } from 'ngx-take-until-destroy';
   styleUrls: ['./concepts.page.scss'],
 })
 export class ConceptsPage implements OnInit, OnDestroy {
-  
+
   inspectedConcept$: Observable<Concept>;
   concepts$: Observable<Concept[]>;
   showConcepts$: Observable<Concept[]>;
   title$: Observable<String>;
 
-  constructor(private conceptSercice: ConceptsService, private route: ActivatedRoute) { }
+  constructor(
+    private conceptSercice: ConceptsService,
+    private route: ActivatedRoute,
+    private userService: UserService,
+    private router: Router
+  ) { }
 
   ngOnDestroy(): void {}
 
@@ -49,12 +55,18 @@ export class ConceptsPage implements OnInit, OnDestroy {
         });
       }), untilDestroyed(this))
     }))
-    
+
     this.title$ = this.inspectedConcept$.pipe(map(concept => {
       if (!concept) {
         return 'Top Level Concepts';
       }
       return `Foundations for: ${concept.title}`;
     }), untilDestroyed(this));
+  }
+
+  chooseConcept(concept: Concept) {
+    this.userService.chooseConcept(concept).subscribe(() => {
+      this.router.navigateByUrl(`/exercise/${concept.id}`);
+    });
   }
 }
