@@ -3,6 +3,7 @@ import * as firebase from 'firebase/app';
 import * as firebaseui from 'firebaseui';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
+import { UserService } from '../user/user.service';
 
 @Component({
   selector: 'app-auth',
@@ -17,7 +18,8 @@ export class AuthPage implements OnInit, OnDestroy {
   constructor(
     private afAuth: AngularFireAuth,
     private router: Router,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private userService: UserService
   ) { }
 
   ngOnDestroy() {
@@ -45,9 +47,10 @@ export class AuthPage implements OnInit, OnDestroy {
 
   onLoginSuccessful() {
     this.router.navigateByUrl('/concepts');
-    // The redirectUrl has to be stored in local storage.
+    // The redirectUrl has to be stored in session storage.
     // Otherwise it would get lost during authentication using Google
     const redirectUrl = sessionStorage.getItem('redirectUrl');
+    this.userService.createUserInDbIfNotYetExisting();
     // Angular cannot know by itself that this method changes the view, 
     // so we need to execute it inside the angular zone
     this.ngZone.run(() => this.router.navigateByUrl(redirectUrl));
