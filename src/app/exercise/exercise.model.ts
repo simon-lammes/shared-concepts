@@ -5,7 +5,7 @@ export enum ExcerciseType {
 export class Exercise {
     constructor(
         public type: ExcerciseType,
-        public question: string,
+        public front: string,
         public possibleTerms: string[]
     ){}
 }
