@@ -14,9 +14,8 @@ import { UserService } from '../user/user.service';
 })
 export class ConceptsPage implements OnInit, OnDestroy {
 
-  inspectedConcept$: Observable<Concept>;
   concepts$: Observable<Concept[]>;
-  showConcepts$: Observable<Concept[]>;
+  inspectedConcept$: Observable<Concept>;
   title$: Observable<String>;
 
   constructor(
@@ -26,47 +25,41 @@ export class ConceptsPage implements OnInit, OnDestroy {
     private router: Router
   ) { }
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void { }
 
   ngOnInit() {
-    this.concepts$ = this.conceptSercice.loadAllConcepts();
-    this.concepts$.pipe(untilDestroyed(this)).subscribe();
-
-    this.inspectedConcept$ = this.route.paramMap.pipe(switchMap(paramMap => {
-      const conceptId = paramMap.get('conceptId');
-      if (!conceptId) {
-        return of(undefined);
-      }
-      return this.conceptSercice.findConceptByUrl(conceptId);
-    }), untilDestroyed(this));
-
-    this.showConcepts$ = this.inspectedConcept$.pipe(switchMap(inspectedConcept => {
-      if (!inspectedConcept) {
-        return this.concepts$;
-      }
-      return this.concepts$.pipe(map(concepts => {
-        return concepts.filter(concept => {
-          if (!concept.foundationFor) {
-            return false;
+    this.conceptSercice.topLevelConcepts$.subscribe();
+    this.conceptSercice.loadTopLevelConcepts().subscribe();
+    this.inspectedConcept$ = this.route.paramMap
+      .pipe(
+        switchMap(paramMap => {
+          const conceptTitle = paramMap.get('conceptTitle');
+          console.log(conceptTitle);
+          if (!conceptTitle) {
+            return of(undefined);
           }
-          return concept.foundationFor.some(ref => {
-            return ref.id == inspectedConcept.id;
-          });
-        });
-      }), untilDestroyed(this))
-    }))
-
-    this.title$ = this.inspectedConcept$.pipe(map(concept => {
-      if (!concept) {
-        return 'Top Level Concepts';
+          return this.conceptSercice.loadConceptByTitle(conceptTitle);
+        }),
+        untilDestroyed(this)
+      );
+    this.inspectedConcept$.subscribe(inspectedConcept => {
+      if (!inspectedConcept) {
+        this.concepts$ = this.conceptSercice.topLevelConcepts$;
+      } else {
+        this.concepts$ = this.conceptSercice.concepts$;
+        this.conceptSercice.loadFoundationConcepts(inspectedConcept);
       }
-      return `Foundations for: ${concept.title}`;
-    }), untilDestroyed(this));
-  }
-
-  chooseConcept(concept: Concept) {
-    this.userService.chooseConcept(concept).subscribe(() => {
-      this.router.navigateByUrl(`/exercise/${concept.id}`);
-    });
+    })
+    this.title$ = this.inspectedConcept$
+      .pipe(
+        switchMap(inspectedConcept => {
+          if (!inspectedConcept) {
+            return "Whatever";
+          }
+          console.log(inspectedConcept);
+          return inspectedConcept.title;
+        }),
+        untilDestroyed(this)
+      );
   }
 }

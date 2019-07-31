@@ -13,7 +13,7 @@ const routes: Routes = [
     component: ConceptsPage
   },
   {
-    path: ':conceptId',
+    path: ':conceptTitle',
     component: ConceptsPage,
   }
 ];

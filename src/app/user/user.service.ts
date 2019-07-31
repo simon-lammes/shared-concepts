@@ -29,7 +29,7 @@ export class UserService {
     const userDocument = this.db.collection('users').doc(this.afAuth.auth.currentUser.uid);
     return userDocument.get().pipe(switchMap(snap => {
       return userDocument.set({
-        chosenConcept: `/concepts/${concept.id}`
+        chosenConcept: concept.title
       });
     }), first());
   }

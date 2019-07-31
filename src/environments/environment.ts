@@ -12,7 +12,8 @@ export const environment = {
     storageBucket: "shared-concepts.appspot.com",
     messagingSenderId: "76627842867",
     appId: "1:76627842867:web:191f1574b6e054a0"
-  }
+  },
+  exerciseURL: "https://simon-lammes.github.io/ExerciseAPI"
 };
 
 /*
