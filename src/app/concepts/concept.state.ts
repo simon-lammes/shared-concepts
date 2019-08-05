@@ -31,10 +31,10 @@ export class ConceptState {
         if (!state.inspectedConcept) {
             return state.topLevelConceptKeys.map(key => state.conceptMap[key]).filter(concept => !!concept);
         }
-        if (!state.inspectedConcept.foundations) {
+        if (!state.inspectedConcept.foundationKeys) {
             return [];
         }
-        return state.inspectedConcept.foundations.map(key => state.conceptMap[key]).filter(concept => !!concept);
+        return state.inspectedConcept.foundationKeys.map(key => state.conceptMap[key]).filter(concept => !!concept);
     }
 
     @Selector()
@@ -91,7 +91,7 @@ export class ConceptState {
         ctx.patchState({
             inspectedConcept
         });
-        return ctx.dispatch(new LoadConcepts(inspectedConcept.foundations));
+        return ctx.dispatch(new LoadConcepts(inspectedConcept.foundationKeys));
     }
 
     @Action(GoToConceptKey)

@@ -1,6 +1,7 @@
 export interface Concept {
     title: string;
-    foundations: string[];
+    foundationKeys: string[];
+    exerciseKeys: string[];
 }
 
 export function getKeyForConcept(concept: Concept) {
