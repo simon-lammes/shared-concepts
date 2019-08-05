@@ -6,6 +6,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { untilDestroyed } from 'ngx-take-until-destroy';
 import { UserService } from '../user/user.service';
+import {Select, Store} from '@ngxs/store';
+import {ConceptState} from './concept.state';
+import {LoadConcept, LoadTopLevelConcepts} from './concept.actions';
 
 @Component({
   selector: 'app-concepts',
@@ -14,52 +17,15 @@ import { UserService } from '../user/user.service';
 })
 export class ConceptsPage implements OnInit, OnDestroy {
 
-  concepts$: Observable<Concept[]>;
-  inspectedConcept$: Observable<Concept>;
-  title$: Observable<String>;
+  @Select(ConceptState.topLevelConcepts) topLevelConcepts$: Observable<Concept[]>;
 
   constructor(
-    private conceptSercice: ConceptsService,
-    private route: ActivatedRoute,
-    private userService: UserService,
-    private router: Router
+    private store: Store
   ) { }
 
   ngOnDestroy(): void { }
 
   ngOnInit() {
-    this.conceptSercice.topLevelConcepts$.subscribe();
-    this.conceptSercice.loadTopLevelConcepts().subscribe();
-    this.inspectedConcept$ = this.route.paramMap
-      .pipe(
-        switchMap(paramMap => {
-          const conceptTitle = paramMap.get('conceptTitle');
-          console.log(conceptTitle);
-          if (!conceptTitle) {
-            return of(undefined);
-          }
-          return this.conceptSercice.loadConceptByTitle(conceptTitle);
-        }),
-        untilDestroyed(this)
-      );
-    this.inspectedConcept$.subscribe(inspectedConcept => {
-      if (!inspectedConcept) {
-        this.concepts$ = this.conceptSercice.topLevelConcepts$;
-      } else {
-        this.concepts$ = this.conceptSercice.concepts$;
-        this.conceptSercice.loadFoundationConcepts(inspectedConcept);
-      }
-    })
-    this.title$ = this.inspectedConcept$
-      .pipe(
-        switchMap(inspectedConcept => {
-          if (!inspectedConcept) {
-            return "Whatever";
-          }
-          console.log(inspectedConcept);
-          return inspectedConcept.title;
-        }),
-        untilDestroyed(this)
-      );
+    this.store.dispatch(new LoadTopLevelConcepts());
   }
 }
