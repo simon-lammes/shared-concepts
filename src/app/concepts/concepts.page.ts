@@ -1,31 +1,42 @@
-import { map, switchMap, filter } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
-import { ConceptsService } from './concepts.service';
-import { Concept } from './concept.model';
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { untilDestroyed } from 'ngx-take-until-destroy';
-import { UserService } from '../user/user.service';
+import {first} from 'rxjs/operators';
+import {Observable} from 'rxjs';
+import {Concept, getKeyForConcept} from './concept.model';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 import {Select, Store} from '@ngxs/store';
 import {ConceptState} from './concept.state';
-import {LoadConcept, LoadTopLevelConcepts} from './concept.actions';
+import {GoToConceptKey, LoadTopLevelConcepts} from './concept.actions';
 
 @Component({
-  selector: 'app-concepts',
-  templateUrl: './concepts.page.html',
-  styleUrls: ['./concepts.page.scss'],
+    selector: 'app-concepts',
+    templateUrl: './concepts.page.html',
+    styleUrls: ['./concepts.page.scss'],
 })
 export class ConceptsPage implements OnInit, OnDestroy {
 
-  @Select(ConceptState.topLevelConcepts) topLevelConcepts$: Observable<Concept[]>;
+    @Select(ConceptState.displayedConcepts) topLevelConcepts$: Observable<Concept[]>;
 
-  constructor(
-    private store: Store
-  ) { }
+    constructor(
+        private store: Store,
+        private route: ActivatedRoute
+    ) {
+    }
 
-  ngOnDestroy(): void { }
+    ngOnDestroy(): void {
+    }
 
-  ngOnInit() {
-    this.store.dispatch(new LoadTopLevelConcepts());
-  }
+    ngOnInit() {
+        this.store.dispatch(new LoadTopLevelConcepts());
+    }
+
+    ionViewWillEnter() {
+        this.route.paramMap.pipe(first()).subscribe(paramMap => {
+            const conceptKey = paramMap.get('conceptKey');
+            return this.store.dispatch(new GoToConceptKey(conceptKey));
+        });
+    }
+
+    getKeyForConcept(concept: Concept) {
+        return getKeyForConcept(concept);
+    }
 }

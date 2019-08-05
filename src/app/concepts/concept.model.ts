@@ -1,6 +1,8 @@
-import { DocumentReference } from '@angular/fire/firestore';
-
 export interface Concept {
     title: string;
-    foundations: Concept[];
+    foundations: string[];
+}
+
+export function getKeyForConcept(concept: Concept) {
+    return concept.title.replace(' ', '');
 }

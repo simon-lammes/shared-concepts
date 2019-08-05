@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Routes, RouterModule } from '@angular/router';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {RouterModule, Routes} from '@angular/router';
 
-import { IonicModule } from '@ionic/angular';
+import {IonicModule} from '@ionic/angular';
 
-import { ConceptsPage } from './concepts.page';
+import {ConceptsPage} from './concepts.page';
 
 const routes: Routes = [
   {
@@ -13,7 +13,7 @@ const routes: Routes = [
     component: ConceptsPage
   },
   {
-    path: ':conceptTitle',
+    path: ':conceptKey',
     component: ConceptsPage,
   }
 ];

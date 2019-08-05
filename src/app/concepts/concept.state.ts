@@ -1,35 +1,49 @@
 import {Concept} from './concept.model';
-import {Action, Selector, State, StateContext, Store} from '@ngxs/store';
-import {LoadConcept, LoadConcepts, LoadTopLevelConcepts} from './concept.actions';
+import {Action, Selector, State, StateContext} from '@ngxs/store';
+import {GoToConcept, GoToConceptKey, LoadConcept, LoadConcepts, LoadTopLevelConcepts} from './concept.actions';
 import {ConceptsService} from './concepts.service';
-import {concatMap, first, map, mergeMap, switchMap, tap} from 'rxjs/operators';
+import {concatMap, switchMap, tap} from 'rxjs/operators';
 import {of} from 'rxjs';
 
 export interface ConceptStateModel {
-    concepts: {
+    conceptMap: {
         [key: string]: Concept
     };
     topLevelConceptKeys: string[];
+    inspectedConcept: Concept;
 }
 
 @State<ConceptStateModel>({
     name: 'concepts',
     defaults: {
-        concepts: {},
+        conceptMap: {},
         topLevelConceptKeys: [],
+        inspectedConcept: undefined,
     }
 })
 export class ConceptState {
 
-    constructor(private conceptsService: ConceptsService, private store: Store) {}
+    constructor(private conceptsService: ConceptsService) {
+    }
+
+    @Selector()
+    static displayedConcepts(state: ConceptStateModel): Concept[] {
+        if (!state.inspectedConcept) {
+            return state.topLevelConceptKeys.map(key => state.conceptMap[key]).filter(concept => !!concept);
+        }
+        if (!state.inspectedConcept.foundations) {
+            return [];
+        }
+        return state.inspectedConcept.foundations.map(key => state.conceptMap[key]).filter(concept => !!concept);
+    }
 
     @Selector()
     static topLevelConcepts(state: ConceptStateModel): Concept[] {
-        return state.topLevelConceptKeys.map(key => state.concepts[key]).filter(concept => !!concept);
+        return state.topLevelConceptKeys.map(key => state.conceptMap[key]).filter(concept => !!concept);
     }
 
     @Action(LoadTopLevelConcepts)
-    loadTopLevelConcepts(ctx: StateContext<ConceptStateModel>, action: LoadTopLevelConcepts) {
+    loadTopLevelConcepts(ctx: StateContext<ConceptStateModel>) {
         const state = ctx.getState();
         if (state.topLevelConceptKeys.length > 0) {
             return;
@@ -57,17 +71,37 @@ export class ConceptState {
     loadConcept(ctx: StateContext<ConceptStateModel>, action: LoadConcept) {
         const state = ctx.getState();
         const conceptTitle = action.conceptKey;
-        if (state.concepts[conceptTitle]) {
+        if (state.conceptMap[conceptTitle]) {
             return;
         }
         return this.conceptsService.fetchConcept(conceptTitle).pipe(
             tap(concept => {
-                const updatedConcepts = {...state.concepts};
+                const updatedConcepts = {...state.conceptMap};
                 updatedConcepts[conceptTitle] = concept;
                 ctx.patchState({
-                    concepts: updatedConcepts
+                    conceptMap: updatedConcepts
                 });
             })
         );
+    }
+
+    @Action(GoToConcept)
+    goToConcept(ctx: StateContext<ConceptStateModel>, action: GoToConcept) {
+        const inspectedConcept = action.concept;
+        ctx.patchState({
+            inspectedConcept
+        });
+        return ctx.dispatch(new LoadConcepts(inspectedConcept.foundations));
+    }
+
+    @Action(GoToConceptKey)
+    goToConceptKey(ctx: StateContext<ConceptStateModel>, action: GoToConceptKey) {
+        const concept = ctx.getState().conceptMap[(action.conceptKey)];
+        if (!concept) {
+            return ctx.patchState({
+                inspectedConcept: undefined
+            });
+        }
+        return ctx.dispatch(new GoToConcept(concept));
     }
 }
