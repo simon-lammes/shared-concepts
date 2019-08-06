@@ -27,6 +27,11 @@ export class ConceptState {
     }
 
     @Selector()
+    static inspectedConcept(state: ConceptStateModel): Concept {
+        return state.inspectedConcept;
+    }
+
+    @Selector()
     static displayedConcepts(state: ConceptStateModel): Concept[] {
         if (!state.inspectedConcept) {
             return state.topLevelConceptKeys.map(key => state.conceptMap[key]).filter(concept => !!concept);

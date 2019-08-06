@@ -2,7 +2,7 @@ import {first} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {Concept, getKeyForConcept} from './concept.model';
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {Select, Store} from '@ngxs/store';
 import {ConceptState} from './concept.state';
 import {GoToConceptKey, LoadTopLevelConcepts} from './concept.actions';
@@ -14,11 +14,13 @@ import {GoToConceptKey, LoadTopLevelConcepts} from './concept.actions';
 })
 export class ConceptsPage implements OnInit, OnDestroy {
 
-    @Select(ConceptState.displayedConcepts) topLevelConcepts$: Observable<Concept[]>;
+    @Select(ConceptState.displayedConcepts) displayedConcepts$: Observable<Concept[]>;
+    @Select(ConceptState.inspectedConcept) inspectedConcept$: Observable<Concept>;
 
     constructor(
         private store: Store,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private router: Router
     ) {
     }
 
@@ -38,5 +40,9 @@ export class ConceptsPage implements OnInit, OnDestroy {
 
     getKeyForConcept(concept: Concept) {
         return getKeyForConcept(concept);
+    }
+
+    studyConcept(inspectedConcept: Concept) {
+        this.router.navigateByUrl('/exercise');
     }
 }
