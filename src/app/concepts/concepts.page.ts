@@ -1,11 +1,11 @@
 import {first} from 'rxjs/operators';
 import {Observable} from 'rxjs';
-import {Concept, getKeyForConcept} from './concept.model';
+import {Concept} from './concept.model';
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Select, Store} from '@ngxs/store';
 import {ConceptState} from './concept.state';
-import {GoToConceptKey, LoadTopLevelConcepts} from './concept.actions';
+import {ChooseConceptToStudy, GoToConceptKey, LoadTopLevelConcepts} from './concept.actions';
 
 @Component({
     selector: 'app-concepts',
@@ -38,11 +38,8 @@ export class ConceptsPage implements OnInit, OnDestroy {
         });
     }
 
-    getKeyForConcept(concept: Concept) {
-        return getKeyForConcept(concept);
-    }
-
-    studyConcept(inspectedConcept: Concept) {
+    studyConcept(chosenConcept: Concept) {
+        this.store.dispatch(new ChooseConceptToStudy(chosenConcept));
         this.router.navigateByUrl('/exercise');
     }
 }

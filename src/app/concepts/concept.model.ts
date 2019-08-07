@@ -1,7 +1,10 @@
+import {Exercise} from '../exercise/exercise.model';
+
 export interface Concept {
+    key: string;
     title: string;
     foundationKeys: string[];
-    exerciseKeys: string[];
+    exercise: Exercise;
 }
 
 export function getKeyForConcept(concept: Concept) {
