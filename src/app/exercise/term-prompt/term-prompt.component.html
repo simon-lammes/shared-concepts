@@ -1,0 +1,11 @@
+<form [formGroup]="exercise" (ngSubmit)="submitAnswer()">
+    <p>{{ termPromptExercise.front }}</p>
+    <ion-item>
+        <ion-input  type="text" formControlName="answer" autofocus="true"></ion-input>
+    </ion-item>
+    <ion-button type="submit" color="primary" size="large" expand="block">
+        Check Answer
+    </ion-button>
+</form>
+
+

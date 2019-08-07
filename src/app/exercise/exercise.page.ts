@@ -1,36 +1,37 @@
-import { ExerciseService } from './exercise.service';
-import { Observable, of } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Concept } from '../concepts/concept.model';
-import { Exercise } from './exercise.model';
-import { switchMap } from 'rxjs/operators';
-import { untilDestroyed } from 'ngx-take-until-destroy';
+import {Observable} from 'rxjs';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Exercise} from './exercise.model';
+import {Select, Store} from '@ngxs/store';
+import {ExerciseState} from './exercise.state';
+import {ExercisesRequested} from './exercise.actions';
 
 @Component({
-  selector: 'app-exercise',
-  templateUrl: './exercise.page.html',
-  styleUrls: ['./exercise.page.scss'],
+    selector: 'app-exercise',
+    templateUrl: './exercise.page.html',
+    styleUrls: ['./exercise.page.scss'],
 })
 export class ExercisePage implements OnInit, OnDestroy {
-  concept$: Observable<Concept>;
-  exercises$: Observable<Exercise[]>
+    @Select(ExerciseState.currentExercise) currentExercise$: Observable<Exercise>;
+    errorMessage: string;
 
-  constructor(
-    private activatedRoute: ActivatedRoute,
-    private exerciseService: ExerciseService,
-  ) { }
-  
-  ngOnDestroy(){}
+    constructor(
+        private store: Store
+    ) {
+    }
 
-  ngOnInit() {
-    this.exercises$ = this.activatedRoute.paramMap.pipe(switchMap(paramMap => {
-      const conceptId = paramMap.get('conceptId');
-      if (!conceptId) {
-        throw new Error('Missing concept id');
-      }
-      return this.exerciseService.loadAllExercisesForConceptId(conceptId);
-    }), untilDestroyed(this));
-  }
+    ngOnDestroy() {
+    }
 
+    ngOnInit() {
+        this.store.dispatch(new ExercisesRequested(
+            [
+                'HowIsTheSmallSpaceBetweenTwoNeuronsCalled',
+                'HowManyAxonsArePartOfOneNeuron',
+                'WhichPartOfANeuronReceivesElectricalSignals'
+            ]));
+    }
+
+    onAnswered(answeredCorrectly: boolean) {
+        console.log('correct: ', answeredCorrectly);
+    }
 }

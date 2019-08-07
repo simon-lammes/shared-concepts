@@ -1,25 +1,18 @@
-import { map, first } from 'rxjs/operators';
-import { Exercise } from './exercise.model';
-import { Observable } from 'rxjs';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { Injectable } from '@angular/core';
-import { convertSnaps } from '../db-utils';
+import {Exercise} from './exercise.model';
+import {Observable} from 'rxjs';
+import {Injectable} from '@angular/core';
+import {environment} from '../../environments/environment';
+import {HttpClient} from '@angular/common/http';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class ExerciseService {
 
-  constructor(private db: AngularFirestore) { }
+    constructor(private http: HttpClient) {
+    }
 
-  loadAllExercisesForConceptId(conceptId: string): Observable<Exercise[]> {
-    return this.db.collection(`concepts/${conceptId}/exercises`)
-      .snapshotChanges()
-      .pipe(
-        map(snaps => {
-          return convertSnaps<Exercise>(snaps);
-        }),
-        first()
-      );
-  }
+    loadConceptByKey(conceptKey: string): Observable<Exercise> {
+        return this.http.get<Exercise>(environment.exerciseURL + `/Exercises/${conceptKey}.json`);
+    }
 }

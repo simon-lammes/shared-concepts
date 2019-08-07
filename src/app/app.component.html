@@ -1,33 +1,40 @@
 <ion-app>
-  <ion-menu side="start">
-    <ion-header>
-      <ion-toolbar>
-        <ion-item *ngIf="(displayName$ | async) as displayName" lines="none">
-          <ion-thumbnail slot="start" *ngIf="(pictureUrl$ | async) as pictureUrl">
-            <img [src]="pictureUrl">
-          </ion-thumbnail>
-          <ion-label>{{ displayName }}</ion-label>
-        </ion-item>
-        <ion-title *ngIf="!(displayName$ | async)">Shared Concepts</ion-title>
-      </ion-toolbar>
+    <ion-menu side="start">
+        <ion-header>
+            <ion-toolbar>
+                <ion-item *ngIf="(displayName$ | async) as displayName" lines="none">
+                    <ion-thumbnail slot="start" *ngIf="(pictureUrl$ | async) as pictureUrl">
+                        <img [src]="pictureUrl" alt="">
+                    </ion-thumbnail>
+                    <ion-label>{{ displayName }}</ion-label>
+                </ion-item>
+                <ion-title *ngIf="!(displayName$ | async)">Shared Concepts</ion-title>
+            </ion-toolbar>
 
-    </ion-header>
+        </ion-header>
 
-    <ion-content>
-      <ion-list>
-        <ion-menu-toggle>
-          <ion-item *ngIf="!(isLoggedIn$ | async)" lines="none" (click)="login()" button>
-            <ion-icon name="log-in" slot="start"></ion-icon>
-            <ion-label>Login</ion-label>
-          </ion-item>
-          <ion-item *ngIf="(isLoggedIn$ | async)" lines="none" (click)="logout()" button>
-            <ion-icon name="log-out" slot="start"></ion-icon>
-            <ion-label>Logout</ion-label>
-          </ion-item>
-
-        </ion-menu-toggle>
-      </ion-list>
-    </ion-content>
-  </ion-menu>
-  <ion-router-outlet main></ion-router-outlet>
+        <ion-content>
+            <ion-list>
+                <ion-menu-toggle>
+                    <ion-item *ngIf="!(isLoggedIn$ | async)" lines="none" (click)="login()" button>
+                        <ion-icon name="log-in" slot="start"></ion-icon>
+                        <ion-label>Login</ion-label>
+                    </ion-item>
+                    <ion-item *ngIf="(isLoggedIn$ | async)" lines="none" (click)="logout()" button>
+                        <ion-icon name="log-out" slot="start"></ion-icon>
+                        <ion-label>Logout</ion-label>
+                    </ion-item>
+                    <ion-item lines="none" (click)="goToExercise()" button>
+                        <ion-icon name="flash" slot="start"></ion-icon>
+                        <ion-label>Exercise</ion-label>
+                    </ion-item>
+                    <ion-item lines="none" (click)="goToConcepts()" button>
+                        <ion-icon name="flask" slot="start"></ion-icon>
+                        <ion-label>Concepts</ion-label>
+                    </ion-item>
+                </ion-menu-toggle>
+            </ion-list>
+        </ion-content>
+    </ion-menu>
+    <ion-router-outlet main></ion-router-outlet>
 </ion-app>

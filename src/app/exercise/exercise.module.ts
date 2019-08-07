@@ -1,31 +1,36 @@
-import { AuthGuard } from './../auth/auth.guard';
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Routes, RouterModule } from '@angular/router';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {RouterModule, Routes} from '@angular/router';
 
-import { IonicModule } from '@ionic/angular';
+import {IonicModule} from '@ionic/angular';
 
-import { ExercisePage } from './exercise.page';
+import {ExercisePage} from './exercise.page';
+import {TermPromptComponent} from './term-prompt/term-prompt.component';
 
 const routes: Routes = [
-  {
-    path: '',
-    component: ExercisePage
-  },
-  {
-    path: ':conceptId',
-    component: ExercisePage
-  }
+    {
+        path: '',
+        component: ExercisePage
+    },
+    {
+        path: ':conceptId',
+        component: ExercisePage
+    }
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    RouterModule.forChild(routes)
-  ],
-  declarations: [ExercisePage]
+    imports: [
+        CommonModule,
+        FormsModule,
+        IonicModule,
+        RouterModule.forChild(routes),
+        ReactiveFormsModule
+    ],
+    declarations: [
+        ExercisePage,
+        TermPromptComponent
+    ]
 })
-export class ExercisePageModule {}
+export class ExercisePageModule {
+}

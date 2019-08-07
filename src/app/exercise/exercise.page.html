@@ -1,13 +1,18 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>exercise</ion-title>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title>Exercise</ion-title>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-list>
-    <ion-item *ngFor="let exercise of exercises$ | async">
-      <ion-label>{{ exercise.front }}</ion-label>
-    </ion-item>
-  </ion-list>
+    <ion-grid>
+        <ion-row>
+            <ion-col *ngIf="(currentExercise$ | async) as currentExercise" size="12" size-sm="8" offset-sm="2">
+                <app-term-prompt (correctlyAnswered)="onAnswered($event)" [termPromptExercise]="currentExercise"></app-term-prompt>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
 </ion-content>

@@ -1,6 +1,6 @@
 import {Concept} from './concept.model';
 import {Action, Selector, State, StateContext} from '@ngxs/store';
-import {GoToConcept, GoToConceptKey, LoadConcept, LoadConcepts, LoadTopLevelConcepts} from './concept.actions';
+import {ChooseConceptToStudy, GoToConcept, GoToConceptKey, LoadConcept, LoadConcepts, LoadTopLevelConcepts} from './concept.actions';
 import {ConceptsService} from './concepts.service';
 import {concatMap, switchMap, tap} from 'rxjs/operators';
 import {of} from 'rxjs';
@@ -11,6 +11,7 @@ export interface ConceptStateModel {
     };
     topLevelConceptKeys: string[];
     inspectedConcept: Concept;
+    conceptToStudy: Concept;
 }
 
 @State<ConceptStateModel>({
@@ -19,6 +20,7 @@ export interface ConceptStateModel {
         conceptMap: {},
         topLevelConceptKeys: [],
         inspectedConcept: undefined,
+        conceptToStudy: undefined
     }
 })
 export class ConceptState {
@@ -108,5 +110,12 @@ export class ConceptState {
             });
         }
         return ctx.dispatch(new GoToConcept(concept));
+    }
+
+    @Action(ChooseConceptToStudy)
+    chooseConceptToStudy(ctx: StateContext<ConceptStateModel>, action: ChooseConceptToStudy) {
+        ctx.patchState({
+            conceptToStudy: action.concept
+        });
     }
 }
