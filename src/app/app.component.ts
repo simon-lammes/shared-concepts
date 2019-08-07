@@ -2,18 +2,18 @@ import {Router} from '@angular/router';
 import {map} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {AngularFireAuth} from '@angular/fire/auth';
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 
 import {Platform} from '@ionic/angular';
 import {SplashScreen} from '@ionic-native/splash-screen/ngx';
 import {StatusBar} from '@ionic-native/status-bar/ngx';
+import {untilDestroyed} from 'ngx-take-until-destroy';
 
 @Component({
     selector: 'app-root',
     templateUrl: 'app.component.html'
 })
-export class AppComponent implements OnInit {
-
+export class AppComponent implements OnInit, OnDestroy {
     pictureUrl$: Observable<string>;
     displayName$: Observable<string>;
     isLoggedIn$: Observable<boolean>;
@@ -28,6 +28,9 @@ export class AppComponent implements OnInit {
         this.initializeApp();
     }
 
+    ngOnDestroy(): void {
+    }
+
     initializeApp() {
         this.platform.ready().then(() => {
             this.statusBar.styleDefault();
@@ -36,13 +39,25 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.pictureUrl$ = this.afAuth.authState.pipe(map(user => {
-            return user ? user.photoURL : null;
-        }));
-        this.displayName$ = this.afAuth.authState.pipe(map(user => {
-            return user ? user.displayName : null;
-        }));
-        this.isLoggedIn$ = this.afAuth.authState.pipe(map(user => !!user));
+        this.pictureUrl$ = this.afAuth.authState
+            .pipe(
+                map(user => {
+                    return user ? user.photoURL : null;
+                }),
+                untilDestroyed(this)
+            );
+        this.displayName$ = this.afAuth.authState
+            .pipe(
+                map(user => {
+                    return user ? user.displayName : null;
+                }),
+                untilDestroyed(this)
+            );
+        this.isLoggedIn$ = this.afAuth.authState
+            .pipe(
+                map(user => !!user),
+                untilDestroyed(this)
+            );
     }
 
     logout() {
