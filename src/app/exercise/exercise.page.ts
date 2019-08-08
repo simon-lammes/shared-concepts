@@ -1,34 +1,21 @@
 import {Observable} from 'rxjs';
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {Exercise} from './exercise.model';
-import {Select, Store} from '@ngxs/store';
+import {Select} from '@ngxs/store';
 import {ExerciseState} from './exercise.state';
-import {ExercisesRequested} from './exercise.actions';
+import {ConceptState} from '../concepts/concept.state';
+import {Concept} from '../concepts/concept.model';
 
 @Component({
     selector: 'app-exercise',
     templateUrl: './exercise.page.html',
     styleUrls: ['./exercise.page.scss'],
 })
-export class ExercisePage implements OnInit, OnDestroy {
+export class ExercisePage {
     @Select(ExerciseState.currentExercise) currentExercise$: Observable<Exercise>;
-    errorMessage: string;
+    @Select(ConceptState.conceptToExerciseNext) conceptToExerciseNext$: Observable<Concept>;
 
-    constructor(
-        private store: Store
-    ) {
-    }
-
-    ngOnDestroy() {
-    }
-
-    ngOnInit() {
-        this.store.dispatch(new ExercisesRequested(
-            [
-                'HowIsTheSmallSpaceBetweenTwoNeuronsCalled',
-                'HowManyAxonsArePartOfOneNeuron',
-                'WhichPartOfANeuronReceivesElectricalSignals'
-            ]));
+    constructor() {
     }
 
     onAnswered(answeredCorrectly: boolean) {

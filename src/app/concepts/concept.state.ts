@@ -49,6 +49,16 @@ export class ConceptState implements NgxsOnInit {
         return state.topLevelConceptKeys.map(key => state.conceptMap[key]).filter(concept => !!concept);
     }
 
+    @Selector()
+    static conceptToStudy(state: ConceptStateModel): Concept {
+        return state.conceptToStudy;
+    }
+
+    @Selector([ConceptState.conceptToStudy])
+    static conceptToExerciseNext(state: ConceptStateModel, conceptToStudy: Concept): Concept {
+        return conceptToStudy;
+    }
+
     ngxsOnInit(ctx: StateContext<ConceptStateModel>) {
         ctx.dispatch(new LoadTopLevelConcepts());
     }
