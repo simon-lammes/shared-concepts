@@ -17,7 +17,12 @@ import {HttpClientModule} from '@angular/common/http';
 import {NgxsModule} from '@ngxs/store';
 import {ConceptState} from './concepts/concept.state';
 import {ExerciseState} from './exercise/exercise.state';
+import {NgxsStoragePluginModule} from '@ngxs/storage-plugin';
 
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
+// @ts-ignore
 @NgModule({
     declarations: [AppComponent],
     entryComponents: [],
@@ -35,7 +40,8 @@ import {ExerciseState} from './exercise/exercise.state';
             ExerciseState
         ], {
             developmentMode: !environment.production
-        })
+        }),
+        NgxsStoragePluginModule.forRoot()
     ],
     providers: [
         StatusBar,

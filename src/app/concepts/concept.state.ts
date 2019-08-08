@@ -57,7 +57,7 @@ export class ConceptState implements NgxsOnInit {
     loadTopLevelConcepts(ctx: StateContext<ConceptStateModel>) {
         const state = ctx.getState();
         if (state.topLevelConceptKeys.length > 0) {
-            return;
+            return ctx.dispatch(new LoadConcepts(state.topLevelConceptKeys));
         }
         return this.conceptsService.fetchTopLevelKeys().pipe(
             tap(topLevelConceptKeys => {
