@@ -5,7 +5,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Select, Store} from '@ngxs/store';
 import {ConceptState} from './concept.state';
-import {ChooseConceptToStudy, GoToConceptKey, LoadTopLevelConcepts} from './concept.actions';
+import {ChooseConceptToStudy, GoToConceptKey} from './concept.actions';
 
 @Component({
     selector: 'app-concepts',
@@ -28,7 +28,6 @@ export class ConceptsPage implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.store.dispatch(new LoadTopLevelConcepts());
     }
 
     ionViewWillEnter() {

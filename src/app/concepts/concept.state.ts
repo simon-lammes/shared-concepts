@@ -1,5 +1,5 @@
 import {Concept} from './concept.model';
-import {Action, Selector, State, StateContext} from '@ngxs/store';
+import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
 import {ChooseConceptToStudy, GoToConcept, GoToConceptKey, LoadConcept, LoadConcepts, LoadTopLevelConcepts} from './concept.actions';
 import {ConceptsService} from './concepts.service';
 import {concatMap, switchMap, tap} from 'rxjs/operators';
@@ -23,7 +23,7 @@ export interface ConceptStateModel {
         conceptToStudy: undefined
     }
 })
-export class ConceptState {
+export class ConceptState implements NgxsOnInit {
 
     constructor(private conceptsService: ConceptsService) {
     }
@@ -47,6 +47,10 @@ export class ConceptState {
     @Selector()
     static topLevelConcepts(state: ConceptStateModel): Concept[] {
         return state.topLevelConceptKeys.map(key => state.conceptMap[key]).filter(concept => !!concept);
+    }
+
+    ngxsOnInit(ctx: StateContext<ConceptStateModel>) {
+        ctx.dispatch(new LoadTopLevelConcepts());
     }
 
     @Action(LoadTopLevelConcepts)
