@@ -18,6 +18,7 @@ import {NgxsModule} from '@ngxs/store';
 import {ConceptState} from './concepts/concept.state';
 import {ExerciseState} from './exercise/exercise.state';
 import {NgxsStoragePluginModule} from '@ngxs/storage-plugin';
+import {SettingsState} from './settings/settings.state';
 
 // @ts-ignore
 // @ts-ignore
@@ -37,7 +38,8 @@ import {NgxsStoragePluginModule} from '@ngxs/storage-plugin';
         HttpClientModule,
         NgxsModule.forRoot([
             ConceptState,
-            ExerciseState
+            ExerciseState,
+            SettingsState
         ], {
             developmentMode: !environment.production
         }),

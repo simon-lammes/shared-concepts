@@ -26,6 +26,11 @@ const routes: Routes = [
         path: 'auth',
         loadChildren: './auth/auth.module#AuthPageModule'
     },
+    {
+        path: 'settings',
+        loadChildren: './settings/settings.module#SettingsPageModule'
+    },
+
 
 ];
 
