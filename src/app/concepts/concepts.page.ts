@@ -6,6 +6,8 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {Select, Store} from '@ngxs/store';
 import {ConceptState} from './concept.state';
 import {ChooseConceptToStudy, GoToConceptKey} from './concept.actions';
+import {showHelpModalForConceptsPage} from './concepts.help';
+import {ModalController} from '@ionic/angular';
 
 @Component({
     selector: 'app-concepts',
@@ -20,7 +22,8 @@ export class ConceptsPage implements OnInit, OnDestroy {
     constructor(
         private store: Store,
         private route: ActivatedRoute,
-        private router: Router
+        private router: Router,
+        private modalController: ModalController
     ) {
     }
 
@@ -40,5 +43,9 @@ export class ConceptsPage implements OnInit, OnDestroy {
     studyConcept(chosenConcept: Concept) {
         this.store.dispatch(new ChooseConceptToStudy(chosenConcept));
         this.router.navigateByUrl('/exercise');
+    }
+
+    onHelpRequested() {
+        showHelpModalForConceptsPage(this.modalController);
     }
 }

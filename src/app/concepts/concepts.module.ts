@@ -6,25 +6,34 @@ import {RouterModule, Routes} from '@angular/router';
 import {IonicModule} from '@ionic/angular';
 
 import {ConceptsPage} from './concepts.page';
+import {HelpModalComponent} from '../help-modal/help-modal.component';
+import {HelpModalModule} from '../help-modal/help-modal.module';
 
 const routes: Routes = [
-  {
-    path: '',
-    component: ConceptsPage
-  },
-  {
-    path: ':conceptKey',
-    component: ConceptsPage,
-  }
+    {
+        path: '',
+        component: ConceptsPage
+    },
+    {
+        path: ':conceptKey',
+        component: ConceptsPage,
+    }
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    RouterModule.forChild(routes)
-  ],
-  declarations: [ConceptsPage]
+    imports: [
+        CommonModule,
+        FormsModule,
+        IonicModule,
+        RouterModule.forChild(routes),
+        HelpModalModule
+    ],
+    declarations: [
+        ConceptsPage
+    ],
+    entryComponents: [
+        HelpModalComponent
+    ]
 })
-export class ConceptsPageModule {}
+export class ConceptsPageModule {
+}
