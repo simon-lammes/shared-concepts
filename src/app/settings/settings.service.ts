@@ -39,7 +39,12 @@ export class SettingsService {
         return this.auth.authState
             .pipe(
                 first(),
-                map(user => user.uid)
+                map(user => {
+                    if (!user) {
+                        return undefined;
+                    }
+                    return user.uid;
+                })
             );
     }
 
