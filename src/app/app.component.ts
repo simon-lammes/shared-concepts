@@ -4,7 +4,7 @@ import {Observable} from 'rxjs';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {Component, OnDestroy, OnInit} from '@angular/core';
 
-import {Platform} from '@ionic/angular';
+import {AlertController, Platform} from '@ionic/angular';
 import {SplashScreen} from '@ionic-native/splash-screen/ngx';
 import {StatusBar} from '@ionic-native/status-bar/ngx';
 import {untilDestroyed} from 'ngx-take-until-destroy';
@@ -23,7 +23,8 @@ export class AppComponent implements OnInit, OnDestroy {
         private splashScreen: SplashScreen,
         private statusBar: StatusBar,
         private afAuth: AngularFireAuth,
-        private router: Router
+        private router: Router,
+        private alertController: AlertController
     ) {
         this.initializeApp();
     }
@@ -60,8 +61,24 @@ export class AppComponent implements OnInit, OnDestroy {
             );
     }
 
-    logout() {
-        this.afAuth.auth.signOut();
+    async logout() {
+        const alert = await this.alertController.create({
+            header: 'Logout',
+            message: 'Are you sure you want to log yourself out?',
+            buttons: [
+                {
+                    text: 'Cancel',
+                    role: 'cancel',
+                    cssClass: 'secondary'
+                }, {
+                    text: 'Yes, logout',
+                    handler: () => {
+                        this.afAuth.auth.signOut();
+                    }
+                }
+            ]
+        });
+        await alert.present();
     }
 
     login() {
