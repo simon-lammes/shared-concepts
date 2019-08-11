@@ -7,6 +7,7 @@ import {IonicModule} from '@ionic/angular';
 
 import {ExercisePage} from './exercise.page';
 import {TermPromptComponent} from './term-prompt/term-prompt.component';
+import {ExplanationComponent} from './explanation/explanation.component';
 
 const routes: Routes = [
     {
@@ -29,7 +30,8 @@ const routes: Routes = [
     ],
     declarations: [
         ExercisePage,
-        TermPromptComponent
+        TermPromptComponent,
+        ExplanationComponent
     ]
 })
 export class ExercisePageModule {

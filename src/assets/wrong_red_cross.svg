@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg viewBox="0 0 145.8244 144.63728" xmlns="http://www.w3.org/2000/svg">
  <defs>
-  <linearGradient id="a" x1="-344.15" x2="-395.85" y1="274.71" y2="425.4" gradientTransform="matrix(-.65718 0 0 .65718 -16.966 114.63)">
+  <linearGradient id="a" x1="-344.15" x2="-395.85" y1="274.71" y2="425.4" gradientTransform="matrix(-.65718 0 0 .65718 -16.966 114.63)" gradientUnits="userSpaceOnUse">
    <stop stop-color="#fff" offset="0"/>
    <stop stop-color="#fff" stop-opacity="0" offset="1"/>
   </linearGradient>

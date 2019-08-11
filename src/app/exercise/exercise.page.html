@@ -24,7 +24,9 @@
                     <ion-card-header>
                         <ion-card-title>{{ concept.title }}</ion-card-title>
                     </ion-card-header>
-                    <ion-card-content>{{ concept.exercise.explanation }}</ion-card-content>
+                    <ion-card-content>
+                        <app-explanation [exercise]="concept.exercise"></app-explanation>
+                    </ion-card-content>
                 </ion-card>
             </ion-col>
         </ion-row>
@@ -36,7 +38,9 @@
                     <ion-card-header>
                         <ion-card-title>{{ concept.title }}</ion-card-title>
                     </ion-card-header>
-                    <ion-card-content>{{ concept.exercise.explanation }}</ion-card-content>
+                    <ion-card-content>
+                        <app-explanation [exercise]="concept.exercise"></app-explanation>
+                    </ion-card-content>
                 </ion-card>
             </ion-col>
         </ion-row>

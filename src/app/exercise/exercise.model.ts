@@ -1,9 +1,9 @@
-export enum ExcerciseType {
+export enum ExerciseType {
     TERM_PROMPT
 }
 
 export interface Exercise {
-    type: ExcerciseType;
+    type: ExerciseType;
     front: string;
     possibleTerms: string[];
     explanation?: string;
