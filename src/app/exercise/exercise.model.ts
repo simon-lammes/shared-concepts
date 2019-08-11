@@ -3,7 +3,8 @@ export enum ExcerciseType {
 }
 
 export interface Exercise {
-        type: ExcerciseType;
-        front: string;
-        possibleTerms: string[];
+    type: ExcerciseType;
+    front: string;
+    possibleTerms: string[];
+    explanation?: string;
 }

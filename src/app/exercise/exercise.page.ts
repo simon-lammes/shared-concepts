@@ -14,11 +14,12 @@ import {Concept} from '../concepts/concept.model';
 export class ExercisePage {
     @Select(ExerciseState.currentExercise) currentExercise$: Observable<Exercise>;
     @Select(ConceptState.conceptToExerciseNext) conceptToExerciseNext$: Observable<Concept>;
+    answeredCorrectly: boolean = undefined;
 
     constructor() {
     }
 
     onAnswered(answeredCorrectly: boolean) {
-        console.log('correct: ', answeredCorrectly);
+        this.answeredCorrectly = answeredCorrectly;
     }
 }
