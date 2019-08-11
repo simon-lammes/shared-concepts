@@ -10,8 +10,8 @@ export interface ConceptStateModel {
         [key: string]: Concept
     };
     topLevelConceptKeys: string[];
-    inspectedConcept: Concept;
-    conceptToStudy: Concept;
+    inspectedConceptKey: string;
+    conceptToStudyKey: string;
 }
 
 @State<ConceptStateModel>({
@@ -19,8 +19,8 @@ export interface ConceptStateModel {
     defaults: {
         conceptMap: {},
         topLevelConceptKeys: [],
-        inspectedConcept: undefined,
-        conceptToStudy: undefined
+        inspectedConceptKey: undefined,
+        conceptToStudyKey: undefined
     }
 })
 export class ConceptState implements NgxsOnInit {
@@ -35,18 +35,19 @@ export class ConceptState implements NgxsOnInit {
 
     @Selector()
     static inspectedConcept(state: ConceptStateModel): Concept {
-        return state.inspectedConcept;
+        return state.conceptMap[state.inspectedConceptKey];
     }
 
     @Selector()
     static displayedConcepts(state: ConceptStateModel): Concept[] {
-        if (!state.inspectedConcept) {
+        const inspectedConcept = state.conceptMap[state.inspectedConceptKey];
+        if (!inspectedConcept) {
             return state.topLevelConceptKeys.map(key => state.conceptMap[key]).filter(concept => !!concept);
         }
-        if (!state.inspectedConcept.foundationKeys) {
+        if (!inspectedConcept.foundationKeys) {
             return [];
         }
-        return state.inspectedConcept.foundationKeys.map(key => state.conceptMap[key]).filter(concept => !!concept);
+        return inspectedConcept.foundationKeys.map(key => state.conceptMap[key]).filter(concept => !!concept);
     }
 
     @Selector()
@@ -56,7 +57,7 @@ export class ConceptState implements NgxsOnInit {
 
     @Selector()
     static conceptToStudy(state: ConceptStateModel): Concept {
-        return state.conceptToStudy;
+        return state.conceptMap[state.conceptToStudyKey];
     }
 
     @Selector([ConceptState.conceptToStudy])
@@ -114,8 +115,9 @@ export class ConceptState implements NgxsOnInit {
     @Action(GoToConcept)
     goToConcept(ctx: StateContext<ConceptStateModel>, action: GoToConcept) {
         const inspectedConcept = action.concept;
+        const inspectedConceptKey = inspectedConcept.key;
         ctx.patchState({
-            inspectedConcept
+            inspectedConceptKey
         });
         return ctx.dispatch(new LoadConcepts(inspectedConcept.foundationKeys));
     }
@@ -125,7 +127,7 @@ export class ConceptState implements NgxsOnInit {
         const concept = ctx.getState().conceptMap[(action.conceptKey)];
         if (!concept) {
             return ctx.patchState({
-                inspectedConcept: undefined
+                inspectedConceptKey: undefined
             });
         }
         return ctx.dispatch(new GoToConcept(concept));
@@ -134,7 +136,7 @@ export class ConceptState implements NgxsOnInit {
     @Action(ChooseConceptToStudy)
     chooseConceptToStudy(ctx: StateContext<ConceptStateModel>, action: ChooseConceptToStudy) {
         ctx.patchState({
-            conceptToStudy: action.concept
+            conceptToStudyKey: action.concept.key
         });
     }
 }
