@@ -15,7 +15,7 @@ const routes: Routes = [
         component: ExercisePage
     },
     {
-        path: ':conceptId',
+        path: ':conceptKey',
         component: ExercisePage
     }
 ];

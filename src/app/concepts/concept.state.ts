@@ -29,6 +29,11 @@ export class ConceptState implements NgxsOnInit {
     }
 
     @Selector()
+    static conceptMap(state: ConceptStateModel): { [key: string]: Concept } {
+        return state.conceptMap;
+    }
+
+    @Selector()
     static inspectedConcept(state: ConceptStateModel): Concept {
         return state.inspectedConcept;
     }
