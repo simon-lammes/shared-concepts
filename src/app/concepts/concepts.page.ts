@@ -1,4 +1,4 @@
-import {first} from 'rxjs/operators';
+import {map, withLatestFrom} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {Concept} from './concept.model';
 import {Component, OnDestroy, OnInit} from '@angular/core';
@@ -16,8 +16,10 @@ import {ModalController} from '@ionic/angular';
 })
 export class ConceptsPage implements OnInit, OnDestroy {
 
-    @Select(ConceptState.displayedConcepts) displayedConcepts$: Observable<Concept[]>;
-    @Select(ConceptState.inspectedConcept) inspectedConcept$: Observable<Concept>;
+    @Select(ConceptState.conceptMap) conceptMap$: Observable<{ [key: string]: Concept }>;
+    @Select(ConceptState.topLevelConceptsKeys) topLevelConceptKeys$: Observable<string[]>;
+    displayedConcepts$: Observable<Concept[]>;
+    inspectedConcept$: Observable<Concept>;
 
     constructor(
         private store: Store,
@@ -31,13 +33,24 @@ export class ConceptsPage implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-    }
-
-    ionViewWillEnter() {
-        this.route.paramMap.pipe(first()).subscribe(paramMap => {
-            const conceptKey = paramMap.get('conceptKey');
-            return this.store.dispatch(new GoToConceptKey(conceptKey));
-        });
+        const conceptKey = this.route.snapshot.paramMap.get('conceptKey');
+        if (conceptKey) {
+            this.store.dispatch(new GoToConceptKey(conceptKey));
+        }
+        this.inspectedConcept$ = this.conceptMap$.pipe(
+            map(conceptMap => {
+                return conceptMap[conceptKey];
+            })
+        );
+        this.displayedConcepts$ = this.inspectedConcept$.pipe(
+            withLatestFrom(this.conceptMap$, this.topLevelConceptKeys$),
+            map(([inspectedConcept, conceptMap, topLevelConceptKeys]) => {
+                if (!inspectedConcept) {
+                    return topLevelConceptKeys.map(key => conceptMap[key]).filter(concept => !!concept);
+                }
+                return inspectedConcept.foundationKeys.map(key => conceptMap[key]).filter(concept => !!concept);
+            })
+        );
     }
 
     studyConcept(chosenConcept: Concept) {

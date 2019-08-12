@@ -18,7 +18,7 @@ export class LoadConcepts {
     }
 }
 
-export class GoToConcept {
+export class NavigatedToConcept {
     static readonly type = '[Concept Page] Go To Concept';
 
     constructor(public concept: Concept) {
