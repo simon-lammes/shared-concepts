@@ -18,14 +18,7 @@ export class LoadConcepts {
     }
 }
 
-export class NavigatedToConcept {
-    static readonly type = '[Concept Page] Go To Concept';
-
-    constructor(public concept: Concept) {
-    }
-}
-
-export class GoToConceptKey {
+export class NavigatedToConceptKey {
     static readonly type = '[Concept Page] Go To Concept Key';
 
     constructor(public conceptKey: string) {

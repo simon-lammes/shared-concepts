@@ -1,6 +1,6 @@
 import {Concept} from './concept.model';
 import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
-import {ChooseConceptToStudy, GoToConceptKey, LoadConcept, LoadConcepts, LoadTopLevelConcepts, NavigatedToConcept} from './concept.actions';
+import {ChooseConceptToStudy, LoadConcept, LoadConcepts, LoadTopLevelConcepts, NavigatedToConceptKey} from './concept.actions';
 import {ConceptsService} from './concepts.service';
 import {concatMap, switchMap, tap} from 'rxjs/operators';
 import {of} from 'rxjs';
@@ -83,31 +83,42 @@ export class ConceptState implements NgxsOnInit {
 
     @Action(LoadConcept)
     loadConcept(ctx: StateContext<ConceptStateModel>, action: LoadConcept) {
-        const state = ctx.getState();
-        const conceptTitle = action.conceptKey;
-        if (state.conceptMap[conceptTitle]) {
+        const conceptAlreadyCached = ctx.getState().conceptMap[action.conceptKey];
+        if (conceptAlreadyCached) {
             return;
         }
-        return this.conceptsService.fetchConcept(conceptTitle).pipe(
+        return this.conceptsService.fetchConcept(action.conceptKey).pipe(
             tap(concept => {
-                const updatedConcepts = {...state.conceptMap};
-                updatedConcepts[conceptTitle] = concept;
-                ctx.patchState({
-                    conceptMap: updatedConcepts
+                return ctx.patchState({
+                    conceptMap: {
+                        ...ctx.getState().conceptMap,
+                        [concept.key]: concept
+                    }
                 });
             })
         );
     }
 
-    @Action(NavigatedToConcept)
-    navigatedToConcept(ctx: StateContext<ConceptStateModel>, action: NavigatedToConcept) {
-        return ctx.dispatch(new LoadConcepts(action.concept.foundationKeys));
-    }
-
-    @Action(GoToConceptKey)
-    goToConceptKey(ctx: StateContext<ConceptStateModel>, action: GoToConceptKey) {
-        const concept = ctx.getState().conceptMap[(action.conceptKey)];
-        return ctx.dispatch(new NavigatedToConcept(concept));
+    @Action(NavigatedToConceptKey)
+    navigatedToConceptKey(ctx: StateContext<ConceptStateModel>, action: NavigatedToConceptKey) {
+        const conceptNavigatedTo = ctx.getState().conceptMap[(action.conceptKey)];
+        // If the concept we navigated to already is cached, we only need to worry about fetching its foundations ...
+        if (conceptNavigatedTo) {
+            return ctx.dispatch(new LoadConcepts(conceptNavigatedTo.foundationKeys));
+        }
+        // ... otherwise we have to fetch the concept we navigated to first, before fetching its foundations.
+        return this.conceptsService.fetchConcept(action.conceptKey)
+            .pipe(
+                tap(concept => {
+                    ctx.patchState({
+                        conceptMap: {
+                            ...ctx.getState().conceptMap,
+                            [concept.key]: concept
+                        }
+                    });
+                    return ctx.dispatch(new LoadConcepts(concept.foundationKeys));
+                })
+            );
     }
 
     @Action(ChooseConceptToStudy)
