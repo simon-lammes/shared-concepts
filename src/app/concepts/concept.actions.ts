@@ -18,6 +18,13 @@ export class LoadConcepts {
     }
 }
 
+export class LoadFoundationConceptsRecursively {
+    static readonly type = '[Concept Page] Load Foundation Concepts Recursively';
+
+    constructor(public concept: Concept) {
+    }
+}
+
 export class NavigatedToConceptKey {
     static readonly type = '[Concept Page] Go To Concept Key';
 

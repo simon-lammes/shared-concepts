@@ -1,8 +1,15 @@
 import {Concept} from './concept.model';
 import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
-import {ChooseConceptToStudy, LoadConcept, LoadConcepts, LoadTopLevelConcepts, NavigatedToConceptKey} from './concept.actions';
+import {
+    ChooseConceptToStudy,
+    LoadConcept,
+    LoadConcepts,
+    LoadFoundationConceptsRecursively,
+    LoadTopLevelConcepts,
+    NavigatedToConceptKey
+} from './concept.actions';
 import {ConceptsService} from './concepts.service';
-import {concatMap, switchMap, tap} from 'rxjs/operators';
+import {concatMap, map} from 'rxjs/operators';
 import {of} from 'rxjs';
 
 export interface ConceptStateModel {
@@ -63,7 +70,7 @@ export class ConceptState implements NgxsOnInit {
             return ctx.dispatch(new LoadConcepts(state.topLevelConceptKeys));
         }
         return this.conceptsService.fetchTopLevelKeys().pipe(
-            tap(topLevelConceptKeys => {
+            map(topLevelConceptKeys => {
                 ctx.patchState({
                     topLevelConceptKeys
                 });
@@ -76,7 +83,7 @@ export class ConceptState implements NgxsOnInit {
     loadConcepts(ctx: StateContext<ConceptStateModel>, action: LoadConcepts) {
         return of(action.conceptKeys)
             .pipe(
-                switchMap(keys => keys),
+                concatMap(keys => keys),
                 concatMap(key => ctx.dispatch(new LoadConcept(key)))
             );
     }
@@ -88,7 +95,7 @@ export class ConceptState implements NgxsOnInit {
             return;
         }
         return this.conceptsService.fetchConcept(action.conceptKey).pipe(
-            tap(concept => {
+            map(concept => {
                 return ctx.patchState({
                     conceptMap: {
                         ...ctx.getState().conceptMap,
@@ -109,7 +116,7 @@ export class ConceptState implements NgxsOnInit {
         // ... otherwise we have to fetch the concept we navigated to first, before fetching its foundations.
         return this.conceptsService.fetchConcept(action.conceptKey)
             .pipe(
-                tap(concept => {
+                map(concept => {
                     ctx.patchState({
                         conceptMap: {
                             ...ctx.getState().conceptMap,
@@ -126,5 +133,36 @@ export class ConceptState implements NgxsOnInit {
         ctx.patchState({
             conceptToStudyKey: action.concept.key
         });
+        return ctx.dispatch(new LoadFoundationConceptsRecursively(action.concept));
+    }
+
+    @Action(LoadFoundationConceptsRecursively)
+    loadFoundationConceptsRecursively(ctx: StateContext<ConceptStateModel>, action: LoadFoundationConceptsRecursively) {
+        if (!action.concept.foundationKeys) {
+            return;
+        }
+        const keys$ = of(action.concept.foundationKeys);
+        return keys$.pipe(
+            concatMap(keys => keys),
+            concatMap(key => {
+                const cachedConcept = ctx.getState().conceptMap[key];
+                if (cachedConcept) {
+                    return of(cachedConcept);
+                }
+                return this.conceptsService.fetchConcept(key);
+            }),
+            map(concept => {
+                const conceptIsNotYetCached = !ctx.getState().conceptMap[concept.key];
+                if (conceptIsNotYetCached) {
+                    ctx.patchState({
+                        conceptMap: {
+                            ...ctx.getState().conceptMap,
+                            [concept.key]: concept
+                        }
+                    });
+                }
+                return ctx.dispatch(new LoadFoundationConceptsRecursively(concept));
+            })
+        );
     }
 }
