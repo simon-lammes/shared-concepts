@@ -4,7 +4,7 @@ import {
     ChooseConceptToStudy,
     LoadConcept,
     LoadConcepts,
-    LoadFoundationConceptsRecursively,
+    LoadFoundationConceptsToStudyRecursively,
     LoadTopLevelConcepts,
     NavigatedToConceptKey
 } from './concept.actions';
@@ -17,7 +17,10 @@ export interface ConceptStateModel {
         [key: string]: Concept
     };
     topLevelConceptKeys: string[];
-    conceptToStudyKey: string;
+    mainConceptToStudyKey: string;
+    allConceptsToStudyKeys: {
+        [key: string]: boolean
+    };
 }
 
 @State<ConceptStateModel>({
@@ -25,7 +28,8 @@ export interface ConceptStateModel {
     defaults: {
         conceptMap: {},
         topLevelConceptKeys: [],
-        conceptToStudyKey: undefined
+        mainConceptToStudyKey: undefined,
+        allConceptsToStudyKeys: {}
     }
 })
 export class ConceptState implements NgxsOnInit {
@@ -43,20 +47,14 @@ export class ConceptState implements NgxsOnInit {
         return state.topLevelConceptKeys;
     }
 
-
     @Selector()
-    static topLevelConcepts(state: ConceptStateModel): Concept[] {
-        return state.topLevelConceptKeys.map(key => state.conceptMap[key]).filter(concept => !!concept);
+    static mainConceptToStudy(state: ConceptStateModel): Concept {
+        return state.conceptMap[state.mainConceptToStudyKey];
     }
 
     @Selector()
-    static conceptToStudy(state: ConceptStateModel): Concept {
-        return state.conceptMap[state.conceptToStudyKey];
-    }
-
-    @Selector([ConceptState.conceptToStudy])
-    static conceptToExerciseNext(state: ConceptStateModel, conceptToStudy: Concept): Concept {
-        return conceptToStudy;
+    static allConceptsToStudyKeys(state: ConceptStateModel): string[] {
+        return Object.keys(state.allConceptsToStudyKeys);
     }
 
     ngxsOnInit(ctx: StateContext<ConceptStateModel>) {
@@ -130,14 +128,23 @@ export class ConceptState implements NgxsOnInit {
 
     @Action(ChooseConceptToStudy)
     chooseConceptToStudy(ctx: StateContext<ConceptStateModel>, action: ChooseConceptToStudy) {
-        ctx.patchState({
-            conceptToStudyKey: action.concept.key
+        ctx.setState({
+            ...ctx.getState(),
+            mainConceptToStudyKey: action.concept.key,
+            // the old concepts to study keys are no longer valid and have to be removed
+            allConceptsToStudyKeys: undefined,
         });
-        return ctx.dispatch(new LoadFoundationConceptsRecursively(action.concept));
+        return ctx.dispatch(new LoadFoundationConceptsToStudyRecursively(action.concept));
     }
 
-    @Action(LoadFoundationConceptsRecursively)
-    loadFoundationConceptsRecursively(ctx: StateContext<ConceptStateModel>, action: LoadFoundationConceptsRecursively) {
+    @Action(LoadFoundationConceptsToStudyRecursively)
+    loadFoundationConceptsToStudyRecursively(ctx: StateContext<ConceptStateModel>, action: LoadFoundationConceptsToStudyRecursively) {
+        ctx.patchState({
+            allConceptsToStudyKeys: {
+                ...ctx.getState().allConceptsToStudyKeys,
+                [action.concept.key]: true
+            }
+        });
         if (!action.concept.foundationKeys) {
             return;
         }
@@ -161,7 +168,7 @@ export class ConceptState implements NgxsOnInit {
                         }
                     });
                 }
-                return ctx.dispatch(new LoadFoundationConceptsRecursively(concept));
+                return ctx.dispatch(new LoadFoundationConceptsToStudyRecursively(concept));
             })
         );
     }

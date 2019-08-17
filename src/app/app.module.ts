@@ -16,7 +16,6 @@ import {AngularFireModule} from '@angular/fire';
 import {HttpClientModule} from '@angular/common/http';
 import {NgxsModule} from '@ngxs/store';
 import {ConceptState} from './concepts/concept.state';
-import {ExerciseState} from './exercise/exercise.state';
 import {NgxsStoragePluginModule} from '@ngxs/storage-plugin';
 import {SettingsState} from './settings/settings.state';
 
@@ -38,7 +37,6 @@ import {SettingsState} from './settings/settings.state';
         HttpClientModule,
         NgxsModule.forRoot([
             ConceptState,
-            ExerciseState,
             SettingsState
         ], {
             developmentMode: !environment.production

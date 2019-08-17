@@ -1,18 +1,66 @@
-import {Exercise} from './exercise.model';
 import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
-import {environment} from '../../environments/environment';
-import {HttpClient} from '@angular/common/http';
+import {first, map, withLatestFrom} from 'rxjs/operators';
+import {Concept} from '../concepts/concept.model';
+import {Experience} from '../experience/experience.model';
+import {ExperienceService} from '../experience/experience.service';
+import {Select} from '@ngxs/store';
+import {ConceptState} from '../concepts/concept.state';
 
 @Injectable({
     providedIn: 'root'
 })
 export class ExerciseService {
+    @Select(ConceptState.conceptMap) conceptMap$: Observable<{ [key: string]: Concept }>;
+    @Select(ConceptState.mainConceptToStudy) mainConceptToStudy$: Observable<Concept>;
+    @Select(ConceptState.allConceptsToStudyKeys) allConceptsToStudyKeys$: Observable<string[]>;
 
-    constructor(private http: HttpClient) {
+    constructor(private experienceService: ExperienceService) {
     }
 
-    loadConceptByKey(conceptKey: string): Observable<Exercise> {
-        return this.http.get<Exercise>(environment.exerciseURL + `/Exercises/${conceptKey}.json`);
+    getConceptByKey$(conceptKey: string): Observable<Concept> {
+        return this.conceptMap$
+            .pipe(
+                first(),
+                map(conceptMap => {
+                    return conceptMap[conceptKey];
+                })
+            );
     }
+
+    getNextConceptKeyToStudy$(): Observable<string> {
+        return this.experienceService.experiencesOfCurrentUser$.pipe(
+            first(),
+            withLatestFrom(this.allConceptsToStudyKeys$, this.conceptMap$),
+            map(([experiencesOfCurrentUser, allConceptsToStudyKeys, conceptMap]) => {
+                return this.getNextConceptKeyToStudy(conceptMap, allConceptsToStudyKeys, experiencesOfCurrentUser);
+            })
+        );
+    }
+
+    getNextConceptKeyToStudy(
+        conceptMap: { [key: string]: Concept },
+        allConceptsToStudyKeys: string[],
+        experiencesOfCurrentUser: { [conceptKey: string]: Experience }
+    ) {
+        const possibleNextConcepts = allConceptsToStudyKeys
+            .map(key => conceptMap[key])
+            .filter(concept => !!concept.exercise);
+        possibleNextConcepts.sort((a, b) => {
+            const experienceA = experiencesOfCurrentUser[a.key];
+            const experienceB = experiencesOfCurrentUser[b.key];
+            if (!experienceA && !experienceB) {
+                return a.title.localeCompare(b.title);
+            }
+            if (!experienceA) {
+                return -1;
+            }
+            if (!experienceB) {
+                return 1;
+            }
+            return experienceA.correctStreak - experienceB.correctStreak;
+        });
+        return possibleNextConcepts[0].key;
+    }
+
 }

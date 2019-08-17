@@ -55,7 +55,7 @@ export class ConceptsPage implements OnInit, OnDestroy {
 
     studyConcept(chosenConcept: Concept) {
         this.store.dispatch(new ChooseConceptToStudy(chosenConcept));
-        this.router.navigateByUrl(`/exercise/${chosenConcept.key}`);
+        this.router.navigateByUrl('/exercise');
     }
 
     onHelpRequested() {

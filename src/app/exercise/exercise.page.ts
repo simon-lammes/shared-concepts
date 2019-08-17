@@ -4,7 +4,8 @@ import {Select} from '@ngxs/store';
 import {ConceptState} from '../concepts/concept.state';
 import {Concept} from '../concepts/concept.model';
 import {first, map, switchMap} from 'rxjs/operators';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
+import {ExerciseService} from './exercise.service';
 
 @Component({
     selector: 'app-exercise',
@@ -12,25 +13,19 @@ import {ActivatedRoute} from '@angular/router';
     styleUrls: ['./exercise.page.scss'],
 })
 export class ExercisePage implements OnInit {
-    @Select(ConceptState.conceptMap) conceptMap$: Observable<{ [key: string]: Concept }>;
-    @Select(ConceptState.conceptToStudy) conceptToStudy$: Observable<Concept>;
+    @Select(ConceptState.mainConceptToStudy) mainConceptToStudy$: Observable<Concept>;
     conceptKey$: Observable<string>;
     concept$: Observable<Concept>;
     answeredCorrectly: boolean = undefined;
 
-    constructor(private route: ActivatedRoute) {
+    constructor(
+        private route: ActivatedRoute,
+        private router: Router,
+        private exerciseService: ExerciseService
+    ) {
     }
 
     ngOnInit(): void {
-        const getConceptByConceptKey = conceptKey => {
-            return this.conceptMap$
-                .pipe(
-                    first(),
-                    map(conceptMap => {
-                        return conceptMap[conceptKey];
-                    })
-                );
-        };
         this.conceptKey$ = this.route.paramMap.pipe(
             first(),
             map(paramMap => {
@@ -40,7 +35,7 @@ export class ExercisePage implements OnInit {
         this.concept$ = this.conceptKey$.pipe(
             first(),
             switchMap(conceptKey => {
-                return getConceptByConceptKey(conceptKey);
+                return this.exerciseService.getConceptByKey$(conceptKey);
             })
         );
     }
@@ -48,4 +43,11 @@ export class ExercisePage implements OnInit {
     onAnswered(answeredCorrectly: boolean) {
         this.answeredCorrectly = answeredCorrectly;
     }
+
+    navigateToNextExercise() {
+        this.exerciseService.getNextConceptKeyToStudy$().subscribe(conceptKey => {
+            this.router.navigateByUrl(`exercise/${conceptKey}`);
+        });
+    }
 }
+

@@ -18,7 +18,7 @@ export class LoadConcepts {
     }
 }
 
-export class LoadFoundationConceptsRecursively {
+export class LoadFoundationConceptsToStudyRecursively {
     static readonly type = '[Concept Page] Load Foundation Concepts Recursively';
 
     constructor(public concept: Concept) {
