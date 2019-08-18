@@ -47,15 +47,15 @@ export class SettingsPage implements OnInit {
     }
 
     onCooldownTimeChanged() {
-        const newCooldownTime = new TimeSpan(
-            parseInt(this.cooldownTimeDaySelect.value, 10),
-            parseInt(this.cooldownTimeHourSelect.value, 10),
-            parseInt(this.cooldownTimeMinuteSelect.value, 10)
-        );
+        const newCooldownTime: TimeSpan = {
+            days: parseInt(this.cooldownTimeDaySelect.value, 10),
+            hours: parseInt(this.cooldownTimeHourSelect.value, 10),
+            minutes: parseInt(this.cooldownTimeMinuteSelect.value, 10)
+        };
         const changes: Partial<SharedConceptSettings> = {
             cooldownTime: newCooldownTime
         };
-        this.settingsService.saveSettings(changes);
+        this.settingsService.saveSettings(changes).subscribe();
     }
 
     getArrayWithNumbersFromZeroToN(n: number): number[] {

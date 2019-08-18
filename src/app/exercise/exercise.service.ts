@@ -3,11 +3,18 @@ import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {first, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import {Concept} from '../concepts/concept.model';
-import {ExperienceMap, getDefaultExperience, updateExperience} from '../experience/experience.model';
+import {
+    exerciseCooldownOverAndExerciseCanBeShown,
+    ExperienceMap,
+    getDefaultExperience,
+    updateExperience
+} from '../experience/experience.model';
 import {ExperienceService} from '../experience/experience.service';
 import {Select} from '@ngxs/store';
 import {ConceptState} from '../concepts/concept.state';
 import {FirebaseService} from '../shared/firebase.service';
+import {SettingsService} from '../settings/settings.service';
+import {SharedConceptSettings} from '../settings/settings.model';
 
 @Injectable({
     providedIn: 'root'
@@ -19,7 +26,8 @@ export class ExerciseService {
 
     constructor(
         private experienceService: ExperienceService,
-        private dbService: FirebaseService
+        private dbService: FirebaseService,
+        private settingsService: SettingsService
     ) {
     }
 
@@ -36,9 +44,9 @@ export class ExerciseService {
     getNextConceptKeyToStudy$(): Observable<string> {
         return this.experienceService.experiencesOfCurrentUser$.pipe(
             first(),
-            withLatestFrom(this.allConceptsToStudyKeys$, this.conceptMap$),
-            map(([experiencesOfCurrentUser, allConceptsToStudyKeys, conceptMap]) => {
-                return this.getNextConceptKeyToStudy(conceptMap, allConceptsToStudyKeys, experiencesOfCurrentUser);
+            withLatestFrom(this.allConceptsToStudyKeys$, this.conceptMap$, this.settingsService.fetchSettingsForCurrentUser$()),
+            map(([experiencesOfCurrentUser, allConceptsToStudyKeys, conceptMap, currentSettings]) => {
+                return this.getNextConceptKeyToStudy(conceptMap, allConceptsToStudyKeys, experiencesOfCurrentUser, currentSettings);
             })
         );
     }
@@ -46,11 +54,23 @@ export class ExerciseService {
     getNextConceptKeyToStudy(
         conceptMap: { [key: string]: Concept },
         allConceptsToStudyKeys: string[],
-        experiencesOfCurrentUser: ExperienceMap
+        experiencesOfCurrentUser: ExperienceMap,
+        settings: SharedConceptSettings
     ) {
         const possibleNextConcepts = allConceptsToStudyKeys
             .map(key => conceptMap[key])
-            .filter(concept => !!concept.exercise);
+            .filter(concept => {
+                if (!concept.exercise) {
+                    // This exercise lacks an exercise and can therefore not be studied directly.
+                    return false;
+                }
+                const experience = experiencesOfCurrentUser[concept.key];
+                if (!experience) {
+                    // if the user has no experience in a concept, it is time to get started ;)
+                    return true;
+                }
+                return exerciseCooldownOverAndExerciseCanBeShown(settings, experience);
+            });
         possibleNextConcepts.sort((a, b) => {
             const experienceA = experiencesOfCurrentUser[a.key];
             const experienceB = experiencesOfCurrentUser[b.key];
@@ -65,6 +85,9 @@ export class ExerciseService {
             }
             return experienceA.correctStreak - experienceB.correctStreak;
         });
+        if (possibleNextConcepts.length < 1) {
+            return '';
+        }
         return possibleNextConcepts[0].key;
     }
 

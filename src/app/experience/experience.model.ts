@@ -1,4 +1,5 @@
 import * as firebase from 'firebase/app';
+import {getSecondsFromTimeSpan, SharedConceptSettings} from '../settings/settings.model';
 
 const thisVariableOnlyServesThePurposeThatWebStormKnowsThatTheAboveImportIsUsedAndShouldNotBeDeleted = firebase;
 import Timestamp = firebase.firestore.Timestamp;
@@ -45,5 +46,12 @@ export function updateExperienceBecauseForUserAnsweredFalsely(experience: Experi
         experience.correctStreak -= 1;
     }
     experience.lastTimeSeen = Timestamp.now();
+}
+
+export function exerciseCooldownOverAndExerciseCanBeShown(settings: SharedConceptSettings, experience: Experience) {
+    const currentSecondCount = Timestamp.now().seconds;
+    const secondCountOfLastTimeSeen = experience.lastTimeSeen.seconds;
+    const requiredSecondDifference = getSecondsFromTimeSpan(settings.cooldownTime);
+    return currentSecondCount - secondCountOfLastTimeSeen >= requiredSecondDifference;
 }
 

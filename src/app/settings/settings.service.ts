@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
-import {SharedConceptSettings} from './settings.model';
+import {defaultSettings, SharedConceptSettings} from './settings.model';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {AngularFireAuth} from '@angular/fire/auth';
-import {switchMap} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {FirebaseService} from '../shared/firebase.service';
 
@@ -29,16 +29,24 @@ export class SettingsService {
 
     fetchSettingsForUserId$(userId: string): Observable<SharedConceptSettings> {
         if (!userId) {
-            return of(undefined);
+            return of(defaultSettings());
         }
-        return this.db.doc<SharedConceptSettings>(`settings/${userId}`).valueChanges();
+        return this.db.doc<SharedConceptSettings>(`settings/${userId}`).valueChanges().pipe(
+            map(settings => {
+                const settingsDoNotYetExist = !settings;
+                if (settingsDoNotYetExist) {
+                    return defaultSettings();
+                }
+                return settings;
+            })
+        );
     }
 
-    saveSettings(changes: Partial<SharedConceptSettings>): Promise<any> {
+    saveSettings(changes: Partial<SharedConceptSettings>): Observable<any> {
         return this.dbService.fetchUserIdSnapshot().pipe(
             switchMap(userId => {
                 return this.dbService.upsert(`settings/${userId}`, changes);
             })
-        ).toPromise();
+        );
     }
 }

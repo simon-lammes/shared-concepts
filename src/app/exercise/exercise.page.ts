@@ -6,6 +6,7 @@ import {Concept} from '../concepts/concept.model';
 import {first, map, switchMap} from 'rxjs/operators';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ExerciseService} from './exercise.service';
+import {AlertController} from '@ionic/angular';
 
 @Component({
     selector: 'app-exercise',
@@ -22,6 +23,7 @@ export class ExercisePage implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private exerciseService: ExerciseService,
+        private alertController: AlertController
     ) {
     }
 
@@ -53,9 +55,38 @@ export class ExercisePage implements OnInit {
 
     navigateToNextExercise() {
         this.exerciseService.getNextConceptKeyToStudy$().subscribe(conceptKey => {
+            if (!conceptKey) {
+                this.informUserThatCurrentlyNoExerciseIsAvailable();
+                return;
+            }
             this.answeredCorrectly = undefined;
             this.router.navigateByUrl(`exercise/${conceptKey}`);
         });
+    }
+
+    informUserThatCurrentlyNoExerciseIsAvailable() {
+        this.alertController.create({
+            header: 'Exercise finished',
+            message: 'You have seen all exercises for your chosen topic recently.',
+            buttons: [
+                {
+                    text: 'shorten cooldown time',
+                    handler: () => {
+                        this.router.navigate(['settings']);
+                    },
+                },
+                {
+                    text: 'choose broader topic / concept',
+                    handler: () => {
+                        this.router.navigate(['concepts']);
+                    }
+                },
+                {
+                    text: 'finish exercising',
+                    role: 'cancel'
+                }
+            ]
+        }).then(alertElement => alertElement.present());
     }
 }
 
