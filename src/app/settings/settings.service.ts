@@ -4,7 +4,7 @@ import {AngularFirestore} from '@angular/fire/firestore';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {first, map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
-import {FirestoreService} from '../shared/firestore.service';
+import {FirebaseService} from '../shared/firebase.service';
 
 @Injectable({
     providedIn: 'root'
@@ -14,12 +14,12 @@ export class SettingsService {
     constructor(
         private db: AngularFirestore,
         private auth: AngularFireAuth,
-        private dbService: FirestoreService
+        private dbService: FirebaseService
     ) {
     }
 
     fetchSettingsSnapshot(): Observable<SharedConceptSettings> {
-        return this.fetchUserIdSnapshot()
+        return this.dbService.fetchUserIdSnapshot()
             .pipe(
                 switchMap(userId => {
                     return this.fetchSettingsSnapshotForUserId(userId);
@@ -51,7 +51,7 @@ export class SettingsService {
     }
 
     saveSettings(changes: Partial<SharedConceptSettings>): Promise<any> {
-        return this.fetchUserIdSnapshot().pipe(
+        return this.dbService.fetchUserIdSnapshot().pipe(
             switchMap(userId => {
                 return this.dbService.upsert(`settings/${userId}`, changes);
             })

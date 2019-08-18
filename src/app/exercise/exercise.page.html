@@ -16,9 +16,13 @@
                         <ion-card-subtitle>You chose to study</ion-card-subtitle>
                         <ion-card-title>{{ conceptToStudy.title }}</ion-card-title>
                     </ion-card-header>
-                    <ion-card-content *ngIf="conceptToStudy.description">{{conceptToStudy.description}}</ion-card-content>
-                    <ion-button expand="block" size="large" (click)="navigateToNextExercise()">Start Studying</ion-button>
-                    <ion-button expand="block" color="secondary" size="large" [routerLink]="['/concepts']">Choose Other Concept</ion-button>
+                    <ion-card-content
+                            *ngIf="conceptToStudy.description">{{conceptToStudy.description}}</ion-card-content>
+                    <ion-button expand="block" size="large" (click)="navigateToNextExercise()">Start Studying
+                    </ion-button>
+                    <ion-button expand="block" color="secondary" size="large" [routerLink]="['/concepts']">Choose Other
+                        Concept
+                    </ion-button>
                 </ion-card>
                 <ion-card *ngIf="!(mainConceptToStudy$ | async)">
                     <ion-card-header>
@@ -33,33 +37,24 @@
             <ion-col size="12" size-sm="8" offset-sm="2">
                 <app-term-prompt *ngIf="concept.exercise?.type.toString() === 'TERM_PROMPT'"
                                  (correctlyAnswered)="onAnswered($event)"
-                                 [termPromptExercise]="concept.exercise"></app-term-prompt>
+                                 [termPromptExercise]="concept.exercise"
+                                 [activated]="answeredCorrectly === undefined"></app-term-prompt>
             </ion-col>
         </ion-row>
-        <ion-row *ngIf="answeredCorrectly && (concept$ | async) as concept">
+        <ion-row *ngIf="(answeredCorrectly !== undefined) && (concept$ | async) as concept">
             <ion-col size="12" size-sm="8"
                      offset-sm="2">
                 <ion-card>
-                    <img height="200px" width="200px" src="./../../assets/approved.svg" alt="Correct"/>
+                    <img *ngIf="answeredCorrectly === true" height="200px" width="200px" src="./../../assets/approved.svg"
+                         alt="Correct"/>
+                    <img *ngIf="answeredCorrectly === false" height="200px" width="200px"
+                         src="./../../assets/wrong_red_cross.svg" alt="Wrong"/>
                     <ion-card-header>
                         <ion-card-title>{{ concept.title }}</ion-card-title>
                     </ion-card-header>
                     <ion-card-content>
                         <app-explanation [exercise]="concept.exercise"></app-explanation>
-                    </ion-card-content>
-                </ion-card>
-            </ion-col>
-        </ion-row>
-        <ion-row *ngIf="answeredCorrectly === false && (concept$ | async) as concept">
-            <ion-col size="12" size-sm="8"
-                     offset-sm="2">
-                <ion-card>
-                    <img height="200px" width="200px" src="./../../assets/wrong_red_cross.svg" alt="Wrong"/>
-                    <ion-card-header>
-                        <ion-card-title>{{ concept.title }}</ion-card-title>
-                    </ion-card-header>
-                    <ion-card-content>
-                        <app-explanation [exercise]="concept.exercise"></app-explanation>
+                        <ion-button expand="block" size="large" (click)="navigateToNextExercise()">Continue</ion-button>
                     </ion-card-content>
                 </ion-card>
             </ion-col>

@@ -1,11 +1,13 @@
 import {Observable} from 'rxjs';
+
 import {Injectable} from '@angular/core';
-import {first, map, withLatestFrom} from 'rxjs/operators';
+import {first, map, switchMap, withLatestFrom} from 'rxjs/operators';
 import {Concept} from '../concepts/concept.model';
-import {Experience} from '../experience/experience.model';
+import {ExperienceMap, getDefaultExperience, updateExperience} from '../experience/experience.model';
 import {ExperienceService} from '../experience/experience.service';
 import {Select} from '@ngxs/store';
 import {ConceptState} from '../concepts/concept.state';
+import {FirebaseService} from '../shared/firebase.service';
 
 @Injectable({
     providedIn: 'root'
@@ -15,7 +17,10 @@ export class ExerciseService {
     @Select(ConceptState.mainConceptToStudy) mainConceptToStudy$: Observable<Concept>;
     @Select(ConceptState.allConceptsToStudyKeys) allConceptsToStudyKeys$: Observable<string[]>;
 
-    constructor(private experienceService: ExperienceService) {
+    constructor(
+        private experienceService: ExperienceService,
+        private dbService: FirebaseService
+    ) {
     }
 
     getConceptByKey$(conceptKey: string): Observable<Concept> {
@@ -41,7 +46,7 @@ export class ExerciseService {
     getNextConceptKeyToStudy(
         conceptMap: { [key: string]: Concept },
         allConceptsToStudyKeys: string[],
-        experiencesOfCurrentUser: { [conceptKey: string]: Experience }
+        experiencesOfCurrentUser: ExperienceMap
     ) {
         const possibleNextConcepts = allConceptsToStudyKeys
             .map(key => conceptMap[key])
@@ -63,4 +68,27 @@ export class ExerciseService {
         return possibleNextConcepts[0].key;
     }
 
+    saveExperienceOfCurrentUser(updatedExperiences: ExperienceMap): Promise<any> {
+        return this.dbService.fetchUserIdSnapshot().pipe(
+            switchMap(userId => {
+                return this.dbService.upsert(`experiences/${userId}`, updatedExperiences);
+            })
+        ).toPromise();
+    }
+
+    saveUserAnswerResult(conceptKey: string, answeredCorrectly: boolean) {
+        return this.experienceService.fetchExperiencesOfCurrentUser$().pipe(
+            first(),
+            withLatestFrom(this.dbService.fetchUserIdSnapshot()),
+            switchMap(([experienceMap, user]) => {
+                let changingExperience = experienceMap[conceptKey];
+                if (!changingExperience) {
+                    changingExperience = getDefaultExperience(conceptKey);
+                    experienceMap[conceptKey] = changingExperience;
+                }
+                updateExperience(changingExperience, conceptKey, answeredCorrectly);
+                return this.dbService.upsert(`experiences/${user}`, experienceMap);
+            })
+        );
+    }
 }

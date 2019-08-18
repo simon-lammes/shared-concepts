@@ -10,6 +10,7 @@ import {IonInput} from '@ionic/angular';
 })
 export class TermPromptComponent implements OnChanges {
     @Input() termPromptExercise: Exercise;
+    @Input() activated: boolean;
     @Output() correctlyAnswered: EventEmitter<boolean> = new EventEmitter<boolean>();
     @ViewChild('answer') answerField: IonInput;
     exercise: FormGroup;
@@ -32,12 +33,13 @@ export class TermPromptComponent implements OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        const noValueChanged = JSON.stringify(changes.previousValue) === JSON.stringify(changes.currentValue);
-        if (noValueChanged) {
-            return;
+        if (this.activated && this.exercise.controls.answer.disabled) {
+            this.exercise.reset();
+            this.exercise.controls.answer.enable();
         }
-        this.exercise.controls.answer.enable();
-        this.exercise.reset();
+        if (!this.activated && this.exercise.controls.answer.enabled) {
+            this.exercise.disable();
+        }
     }
 
     submitAnswer() {
@@ -46,7 +48,6 @@ export class TermPromptComponent implements OnChanges {
         }
         const answer: string = this.exercise.value.answer;
         const answerIsCorrect = this.termPromptExercise.possibleTerms.some(term => TermPromptComponent.compareTerms(term, answer));
-        this.exercise.controls.answer.disable();
         this.correctlyAnswered.emit(answerIsCorrect);
     }
 }

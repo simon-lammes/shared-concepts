@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {Observable} from 'rxjs';
-import {Experience} from './experience.model';
+import {ExperienceMap} from './experience.model';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {map, switchMap} from 'rxjs/operators';
 import {untilDestroyed} from 'ngx-take-until-destroy';
@@ -12,7 +12,7 @@ import {OnDestroy} from '@angular/core/src/metadata/lifecycle_hooks';
 })
 export class ExperienceService implements OnDestroy {
 
-    experiencesOfCurrentUser$: Observable<{ [conceptKey: string]: Experience }>;
+    experiencesOfCurrentUser$: Observable<ExperienceMap>;
 
     constructor(
         private db: AngularFirestore,
@@ -21,14 +21,17 @@ export class ExperienceService implements OnDestroy {
         this.experiencesOfCurrentUser$ = this.fetchExperiencesOfCurrentUser$();
     }
 
-    fetchExperiencesOfCurrentUser$(): Observable<{ [conceptKey: string]: Experience }> {
+    fetchExperiencesOfCurrentUser$(): Observable<ExperienceMap> {
         return this.auth.authState.pipe(
             switchMap(user => {
-                return this.db.doc<{ experiencesByConceptKeys: { [conceptKey: string]: Experience } }>
+                return this.db.doc<ExperienceMap>
                 (`experiences/${user.uid}`).valueChanges();
             }),
-            map(data => {
-                return data.experiencesByConceptKeys;
+            map(experienceMap => {
+                if (!experienceMap) {
+                    experienceMap = {};
+                }
+                return experienceMap;
             }),
             untilDestroyed(this)
         );

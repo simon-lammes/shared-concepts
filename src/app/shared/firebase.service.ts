@@ -1,14 +1,17 @@
 import {Injectable} from '@angular/core';
 import {Action, AngularFirestore, DocumentSnapshotDoesNotExist, DocumentSnapshotExists} from '@angular/fire/firestore';
-import {take} from 'rxjs/operators';
+import {first, map, take} from 'rxjs/operators';
+import {Observable} from 'rxjs';
+import {AngularFireAuth} from '@angular/fire/auth';
 
 @Injectable({
     providedIn: 'root'
 })
-export class FirestoreService {
+export class FirebaseService {
 
     constructor(
-        private db: AngularFirestore
+        private db: AngularFirestore,
+        private auth: AngularFireAuth
     ) {
     }
 
@@ -24,5 +27,18 @@ export class FirestoreService {
             }
             return this.db.doc(ref).set(data);
         });
+    }
+
+    fetchUserIdSnapshot(): Observable<string> {
+        return this.auth.authState
+            .pipe(
+                first(),
+                map(user => {
+                    if (!user) {
+                        return undefined;
+                    }
+                    return user.uid;
+                })
+            );
     }
 }

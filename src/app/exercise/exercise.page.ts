@@ -21,7 +21,7 @@ export class ExercisePage implements OnInit {
     constructor(
         private route: ActivatedRoute,
         private router: Router,
-        private exerciseService: ExerciseService
+        private exerciseService: ExerciseService,
     ) {
     }
 
@@ -32,6 +32,7 @@ export class ExercisePage implements OnInit {
                 return paramMap.get('conceptKey');
             })
         );
+        this.conceptKey$.subscribe(() => this.answeredCorrectly = undefined);
         this.concept$ = this.conceptKey$.pipe(
             first(),
             switchMap(conceptKey => {
@@ -42,10 +43,17 @@ export class ExercisePage implements OnInit {
 
     onAnswered(answeredCorrectly: boolean) {
         this.answeredCorrectly = answeredCorrectly;
+        this.conceptKey$.pipe(
+            first(),
+            switchMap(conceptKey => {
+                return this.exerciseService.saveUserAnswerResult(conceptKey, answeredCorrectly);
+            })
+        ).subscribe();
     }
 
     navigateToNextExercise() {
         this.exerciseService.getNextConceptKeyToStudy$().subscribe(conceptKey => {
+            this.answeredCorrectly = undefined;
             this.router.navigateByUrl(`exercise/${conceptKey}`);
         });
     }
