@@ -2,11 +2,9 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {IonSelect, ModalController} from '@ionic/angular';
 import {HelpModalComponent} from '../help-modal/help-modal.component';
 import {HelpSection} from '../help-modal/help-section.model';
-import {SettingsState} from './settings.state';
 import {Observable} from 'rxjs';
 import {SharedConceptSettings, TimeSpan} from './settings.model';
-import {Select, Store} from '@ngxs/store';
-import {CooldownTimeChanged} from './settings.actions';
+import {SettingsService} from './settings.service';
 
 @Component({
     selector: 'app-settings',
@@ -15,18 +13,19 @@ import {CooldownTimeChanged} from './settings.actions';
 })
 export class SettingsPage implements OnInit {
 
-    @Select(SettingsState.currentSettings) currentSettings$: Observable<SharedConceptSettings>;
+    currentSettings$: Observable<SharedConceptSettings>;
     @ViewChild('cooldownTimeDaySelect') cooldownTimeDaySelect: IonSelect;
     @ViewChild('cooldownTimeHourSelect') cooldownTimeHourSelect: IonSelect;
     @ViewChild('cooldownTimeMinutesSelect') cooldownTimeMinuteSelect: IonSelect;
 
     constructor(
         private modalController: ModalController,
-        private store: Store
+        private settingsService: SettingsService
     ) {
     }
 
     ngOnInit() {
+        this.currentSettings$ = this.settingsService.fetchSettingsForCurrentUser$();
     }
 
     onHelpRequested() {
@@ -48,12 +47,15 @@ export class SettingsPage implements OnInit {
     }
 
     onCooldownTimeChanged() {
-        const newCooldownTime: TimeSpan = {
-            days: this.cooldownTimeDaySelect.value,
-            hours: this.cooldownTimeHourSelect.value,
-            minutes: this.cooldownTimeMinuteSelect.value
+        const newCooldownTime = new TimeSpan(
+            parseInt(this.cooldownTimeDaySelect.value, 10),
+            parseInt(this.cooldownTimeHourSelect.value, 10),
+            parseInt(this.cooldownTimeMinuteSelect.value, 10)
+        );
+        const changes: Partial<SharedConceptSettings> = {
+            cooldownTime: newCooldownTime
         };
-        this.store.dispatch(new CooldownTimeChanged(newCooldownTime));
+        this.settingsService.saveSettings(changes);
     }
 
     getArrayWithNumbersFromZeroToN(n: number): number[] {

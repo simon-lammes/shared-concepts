@@ -86,7 +86,7 @@ export class ExerciseService {
                     changingExperience = getDefaultExperience(conceptKey);
                     experienceMap[conceptKey] = changingExperience;
                 }
-                updateExperience(changingExperience, conceptKey, answeredCorrectly);
+                updateExperience(changingExperience, answeredCorrectly);
                 return this.dbService.upsert(`experiences/${user}`, experienceMap);
             })
         );

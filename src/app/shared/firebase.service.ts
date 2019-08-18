@@ -30,9 +30,12 @@ export class FirebaseService {
     }
 
     fetchUserIdSnapshot(): Observable<string> {
+        return this.fetchUserId$().pipe(first());
+    }
+
+    fetchUserId$(): Observable<string> {
         return this.auth.authState
             .pipe(
-                first(),
                 map(user => {
                     if (!user) {
                         return undefined;
