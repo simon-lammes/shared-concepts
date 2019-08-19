@@ -8,7 +8,12 @@
                     </ion-thumbnail>
                     <ion-label>{{ displayName }}</ion-label>
                 </ion-item>
-                <ion-title *ngIf="!(displayName$ | async)">Shared Concepts</ion-title>
+                <ion-item *ngIf="!(displayName$ | async)" lines="none">
+                    <ion-thumbnail slot="start">
+                        <img src="../assets/icon/shared_concepts_circuits.svg" alt="">
+                    </ion-thumbnail>
+                    <ion-label>Shared Concepts</ion-label>
+                </ion-item>
             </ion-toolbar>
 
         </ion-header>

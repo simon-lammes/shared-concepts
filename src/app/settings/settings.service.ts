@@ -45,6 +45,9 @@ export class SettingsService {
     saveSettings(changes: Partial<SharedConceptSettings>): Observable<any> {
         return this.dbService.fetchUserIdSnapshot().pipe(
             switchMap(userId => {
+                if (!userId) {
+                    return of(undefined);
+                }
                 return this.dbService.upsert(`settings/${userId}`, changes);
             })
         );
