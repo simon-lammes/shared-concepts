@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {AlertController, IonSelect, ModalController} from '@ionic/angular';
+import {AlertController, IonSelect, IonToggle, ModalController} from '@ionic/angular';
 import {HelpModalComponent} from '../help-modal/help-modal.component';
 import {HelpSection} from '../help-modal/help-section.model';
 import {Observable} from 'rxjs';
@@ -17,6 +17,9 @@ export class SettingsPage implements OnInit {
     @ViewChild('cooldownTimeDaySelect') cooldownTimeDaySelect: IonSelect;
     @ViewChild('cooldownTimeHourSelect') cooldownTimeHourSelect: IonSelect;
     @ViewChild('cooldownTimeMinutesSelect') cooldownTimeMinuteSelect: IonSelect;
+    @ViewChild('imageOcclusionToggle') imageOcclusionToggle: IonToggle;
+    @ViewChild('multipleResponseQuestionToggle') multipleResponseQuestionToggle: IonToggle;
+    @ViewChild('termPromptToggle') termPromptToggle: IonToggle;
 
     constructor(
         private modalController: ModalController,
@@ -41,6 +44,10 @@ export class SettingsPage implements OnInit {
                 topic: 'Clear Cache',
                 helpText: 'Clearing the cache helps when the concepts on the server have changed and you want to get those changes. ' +
                     'By clearing the cache, all concepts have to be fetched again and thereby you get the new concepts.'
+            },
+            {
+                topic: 'Activated Exercise Types',
+                helpText: 'There are different types of exercises. Only exercising with types that you activated will be shown to you.'
             }
         ];
         this.modalController.create({
@@ -88,6 +95,23 @@ export class SettingsPage implements OnInit {
                 }
             ]
         }).then(toastElement => toastElement.present());
+    }
+
+    onActivatedExerciseTypesChanged() {
+        const disabledExerciseTypes = [];
+        if (!this.imageOcclusionToggle.checked) {
+            disabledExerciseTypes.push('IMAGE_OCCLUSION');
+        }
+        if (!this.multipleResponseQuestionToggle.checked) {
+            disabledExerciseTypes.push('MULTIPLE_RESPONSE_QUESTION');
+        }
+        if (!this.termPromptToggle.checked) {
+            disabledExerciseTypes.push('TERM_PROMPT');
+        }
+        const changes: Partial<SharedConceptSettings> = {
+            disabledExerciseTypes
+        };
+        this.settingsService.saveSettings(changes).subscribe();
     }
 }
 

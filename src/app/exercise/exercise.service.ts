@@ -64,6 +64,11 @@ export class ExerciseService {
                     // This exercise lacks an exercise and can therefore not be studied directly.
                     return false;
                 }
+                const exerciseTypeDisabled = settings.disabledExerciseTypes &&
+                    settings.disabledExerciseTypes.includes(concept.exercise.type);
+                if (exerciseTypeDisabled) {
+                    return false;
+                }
                 const experience = experiencesOfCurrentUser[concept.key];
                 if (!experience) {
                     // if the user has no experience in a concept, it is time to get started ;)

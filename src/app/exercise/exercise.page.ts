@@ -67,16 +67,18 @@ export class ExercisePage implements OnInit {
     informUserThatCurrentlyNoExerciseIsAvailable() {
         this.alertController.create({
             header: 'Exercise finished',
-            message: 'You have seen all exercises for your chosen topic recently.',
+            message: 'You have seen all enabled exercises for your chosen topic recently. ' +
+                'In order to study on you can either choose a broader topic or change the settings. ' +
+                'Maybe the cooldown time is too long or you have some exercise types disabled.',
             buttons: [
                 {
-                    text: 'shorten cooldown time',
+                    text: 'settings',
                     handler: () => {
                         this.router.navigate(['settings']);
                     },
                 },
                 {
-                    text: 'choose broader topic / concept',
+                    text: 'choose new concept',
                     handler: () => {
                         this.router.navigate(['concepts']);
                     }

@@ -1,5 +1,6 @@
 export interface SharedConceptSettings {
     cooldownTime: TimeSpan;
+    disabledExerciseTypes?: string[];
 }
 
 export interface TimeSpan {

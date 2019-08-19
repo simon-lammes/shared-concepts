@@ -1,5 +1,5 @@
 <p *ngIf="exercise.explanation">{{exercise.explanation}}</p>
-<div *ngIf="this.exerciseIsOfTypeTermPrompt">
+<div *ngIf="this.exercise.type === 'TERM_PROMPT'">
     Possible Solutions are:
     <ul>
         <li *ngFor="let possibleTerm of exercise.possibleTerms">{{possibleTerm}}</li>
