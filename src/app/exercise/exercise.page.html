@@ -3,6 +3,11 @@
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
+        <ion-buttons slot="end">
+            <ion-button (click)="onMoreRequested($event)">
+                <ion-icon name="more" slot="icon-only"></ion-icon>
+            </ion-button>
+        </ion-buttons>
         <ion-title>Exercise</ion-title>
     </ion-toolbar>
 </ion-header>
@@ -35,6 +40,7 @@
         </ion-row>
         <ion-row *ngIf="(concept$ | async) as concept">
             <ion-col size="12" size-sm="8" offset-sm="2">
+                <app-exercise-type-unknown *ngIf="isCurrentExerciseTypeUnknown$ | async" (disableExerciseAndContinue)="disableCurrentExercise()"></app-exercise-type-unknown>
                 <app-term-prompt *ngIf="concept.exercise?.type.toString() === 'TERM_PROMPT'"
                                  (correctlyAnswered)="onAnswered($event)"
                                  [termPromptExercise]="concept.exercise"

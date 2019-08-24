@@ -8,6 +8,8 @@ import {IonicModule} from '@ionic/angular';
 import {ExercisePage} from './exercise.page';
 import {TermPromptComponent} from './term-prompt/term-prompt.component';
 import {ExplanationComponent} from './explanation/explanation.component';
+import {ExerciseTypeUnknownComponent} from './exercise-type-unknown/exercise-type-unknown.component';
+import {MoreRequestedComponent} from './more-requested/more-requested.component';
 
 const routes: Routes = [
     {
@@ -31,7 +33,13 @@ const routes: Routes = [
     declarations: [
         ExercisePage,
         TermPromptComponent,
-        ExplanationComponent
+        ExplanationComponent,
+        ExercisePage,
+        ExerciseTypeUnknownComponent,
+        MoreRequestedComponent
+    ],
+    entryComponents: [
+        MoreRequestedComponent
     ]
 })
 export class ExercisePageModule {
