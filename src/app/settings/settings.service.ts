@@ -37,6 +37,15 @@ export class SettingsService {
                 if (settingsDoNotYetExist) {
                     return defaultSettings();
                 }
+                if (!settings.disabledExerciseTypes) {
+                    settings.disabledExerciseTypes = [];
+                }
+                if (!settings.conceptKeysOfDisabledExercises) {
+                    settings.conceptKeysOfDisabledExercises = [];
+                }
+                if (!settings.cooldownTime) {
+                    settings.cooldownTime = defaultSettings().cooldownTime;
+                }
                 return settings;
             })
         );

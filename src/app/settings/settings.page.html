@@ -13,71 +13,82 @@
 </ion-header>
 
 <ion-content>
-    <ion-grid *ngIf="(currentSettings$ | async) as currentSettings">
-        <ion-row>
-            <ion-col size="12" size-sm="8" offset-sm="2">
-                <ion-list>
-                    <ion-list-header>
-                        Cooldown Time
-                    </ion-list-header>
-                    <ion-item>
-                        <ion-label>Days</ion-label>
-                        <ion-select #cooldownTimeDaySelect (ionChange)="onCooldownTimeChanged()" okText="Set"
-                                    cancelText="Dismiss" value="{{ currentSettings.cooldownTime.days }}">
-                            <ion-select-option *ngFor="let value of getArrayWithNumbersFromZeroToN(14)"
-                                               value="{{ value }}">{{ value }}</ion-select-option>
-                        </ion-select>
-                    </ion-item>
-                    <ion-item>
-                        <ion-label>Hours</ion-label>
-                        <ion-select #cooldownTimeHourSelect (ionChange)="onCooldownTimeChanged()" okText="Set"
-                                    cancelText="Dismiss" value="{{ currentSettings.cooldownTime.hours }}">
-                            <ion-select-option *ngFor="let value of getArrayWithNumbersFromZeroToN(23)"
-                                               value="{{ value }}">{{ value }}</ion-select-option>
-                        </ion-select>
-                    </ion-item>
-                    <ion-item>
-                        <ion-label>Minutes</ion-label>
-                        <ion-select #cooldownTimeMinutesSelect (ionChange)="onCooldownTimeChanged()" okText="Set"
-                                    cancelText="Dismiss" value="{{ currentSettings.cooldownTime.minutes }}">
-                            <ion-select-option *ngFor="let value of getArrayWithNumbersFromZeroToN(59)"
-                                               value="{{ value }}">{{ value }}</ion-select-option>
-                        </ion-select>
-                    </ion-item>
-                </ion-list>
-            </ion-col>
-        </ion-row>
-        <ion-row>
-            <ion-col size="12" size-sm="8" offset-sm="2">
-                <ion-list>
-                    <ion-list-header>
-                        Activated Exercise Types
-                    </ion-list-header>
-                    <ion-item>
-                        <ion-label>Image Occlusion</ion-label>
-                        <ion-toggle #imageOcclusionToggle slot="end" (ionChange)="onActivatedExerciseTypesChanged()"
-                                    [ngModel]="!currentSettings.disabledExerciseTypes || !currentSettings.disabledExerciseTypes.includes('IMAGE_OCCLUSION')"></ion-toggle>
-                    </ion-item>
-                    <ion-item>
-                        <ion-label>Multiple Response Question</ion-label>
-                        <ion-toggle #multipleResponseQuestionToggle slot="end" (ionChange)="onActivatedExerciseTypesChanged()"
-                                    [ngModel]="!currentSettings.disabledExerciseTypes || !currentSettings.disabledExerciseTypes.includes('MULTIPLE_RESPONSE_QUESTION')"></ion-toggle>
-                    </ion-item>
-                    <ion-item>
-                        <ion-label>Term Prompt</ion-label>
-                        <ion-toggle #termPromptToggle slot="end" (ionChange)="onActivatedExerciseTypesChanged()"
-                                    [ngModel]="!currentSettings.disabledExerciseTypes || !currentSettings.disabledExerciseTypes.includes('TERM_PROMPT')"></ion-toggle>
-                    </ion-item>
-                </ion-list>
-            </ion-col>
-        </ion-row>
-        <ion-row>
-            <ion-col size="12" size-sm="8" offset-sm="2">
-                <ion-button expand="block" size="large" (click)="onClearCacheRequested()">
-                    Clear Concept Cache
-                </ion-button>
-            </ion-col>
-        </ion-row>
-    </ion-grid>
-
+    <form *ngIf="settingsForm" [formGroup]="settingsForm">
+        <ion-grid>
+            <ion-row>
+                <ion-col size="12" size-sm="8" offset-sm="2">
+                    <ion-list>
+                        <ion-list-header>
+                            Cooldown Time
+                        </ion-list-header>
+                        <ion-item>
+                            <ion-label>Days</ion-label>
+                            <ion-select formControlName="days" okText="Set" cancelText="Dismiss" (ionChange)="updateSettings()">
+                                <ion-select-option *ngFor="let value of getArrayWithNumbersFromZeroToN(14)"
+                                                   value="{{ value }}">{{ value }}</ion-select-option>
+                            </ion-select>
+                        </ion-item>
+                        <ion-item>
+                            <ion-label>Hours</ion-label>
+                            <ion-select formControlName="hours" okText="Set" cancelText="Dismiss" (ionChange)="updateSettings()">
+                                <ion-select-option *ngFor="let value of getArrayWithNumbersFromZeroToN(23)"
+                                                   value="{{ value }}">{{ value }}</ion-select-option>
+                            </ion-select>
+                        </ion-item>
+                        <ion-item>
+                            <ion-label>Minutes</ion-label>
+                            <ion-select formControlName="minutes" okText="Set" cancelText="Dismiss" (ionChange)="updateSettings()">
+                                <ion-select-option *ngFor="let value of getArrayWithNumbersFromZeroToN(59)"
+                                                   value="{{ value }}">{{ value }}</ion-select-option>
+                            </ion-select>
+                        </ion-item>
+                    </ion-list>
+                </ion-col>
+            </ion-row>
+            <ion-row>
+                <ion-col size="12" size-sm="8" offset-sm="2">
+                    <ion-list>
+                        <ion-list-header>
+                            Activated Exercise Types
+                        </ion-list-header>
+                        <ion-item>
+                            <ion-label>Image Occlusion</ion-label>
+                            <ion-toggle formControlName="imageOcclusionActivated" slot="end" (ionChange)="updateSettings()"></ion-toggle>
+                        </ion-item>
+                        <ion-item>
+                            <ion-label>Multiple Response Question</ion-label>
+                            <ion-toggle formControlName="multipleResponseQuestionActivated" slot="end" (ionChange)="updateSettings()"></ion-toggle>
+                        </ion-item>
+                        <ion-item>
+                            <ion-label>Term Prompt</ion-label>
+                            <ion-toggle formControlName="termPromptActivated" slot="end" (ionChange)="updateSettings()"></ion-toggle>
+                        </ion-item>
+                    </ion-list>
+                </ion-col>
+            </ion-row>
+            <ion-row>
+                <ion-col size="12" size-sm="8" offset-sm="2">
+                    <ion-list formArrayName="conceptKeysOfDisabledExercises">
+                        <ion-list-header>
+                            Deactivated Exercises
+                        </ion-list-header>
+                        <ion-item *ngFor="let conceptKeyOfDisabledExercise of conceptKeysOfDisabledExercises.controls; let i=index">
+                            <ion-icon (click)="conceptKeysOfDisabledExercises.removeAt(i); updateSettings();" slot="end" name="close"></ion-icon>
+                            <ion-label>{{ conceptKeyOfDisabledExercise.value }}</ion-label>
+                        </ion-item>
+                        <ion-item *ngIf="conceptKeysOfDisabledExercises.length < 1">
+                            <ion-label>Currently no specific exercises are disabled.</ion-label>
+                        </ion-item>
+                    </ion-list>
+                </ion-col>
+            </ion-row>
+            <ion-row>
+                <ion-col size="12" size-sm="8" offset-sm="2">
+                    <ion-button expand="block" size="large" (click)="onClearCacheRequested()">
+                        Clear Concept Cache
+                    </ion-button>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </form>
 </ion-content>

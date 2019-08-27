@@ -1,10 +1,11 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {AlertController, IonSelect, IonToggle, ModalController} from '@ionic/angular';
+import {Component, OnInit} from '@angular/core';
+import {AlertController, ModalController} from '@ionic/angular';
 import {HelpModalComponent} from '../help-modal/help-modal.component';
 import {HelpSection} from '../help-modal/help-section.model';
 import {Observable} from 'rxjs';
-import {SharedConceptSettings, TimeSpan} from './settings.model';
+import {SharedConceptSettings} from './settings.model';
 import {SettingsService} from './settings.service';
+import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 
 @Component({
     selector: 'app-settings',
@@ -13,23 +14,58 @@ import {SettingsService} from './settings.service';
 })
 export class SettingsPage implements OnInit {
 
+    settingsForm: FormGroup;
     currentSettings$: Observable<SharedConceptSettings>;
-    @ViewChild('cooldownTimeDaySelect') cooldownTimeDaySelect: IonSelect;
-    @ViewChild('cooldownTimeHourSelect') cooldownTimeHourSelect: IonSelect;
-    @ViewChild('cooldownTimeMinutesSelect') cooldownTimeMinuteSelect: IonSelect;
-    @ViewChild('imageOcclusionToggle') imageOcclusionToggle: IonToggle;
-    @ViewChild('multipleResponseQuestionToggle') multipleResponseQuestionToggle: IonToggle;
-    @ViewChild('termPromptToggle') termPromptToggle: IonToggle;
+    get conceptKeysOfDisabledExercises() {
+        return this.settingsForm.get('conceptKeysOfDisabledExercises') as FormArray;
+    }
 
     constructor(
         private modalController: ModalController,
         private settingsService: SettingsService,
-        private alertController: AlertController
+        private alertController: AlertController,
+        private formBuilder: FormBuilder
     ) {
     }
 
     ngOnInit() {
         this.currentSettings$ = this.settingsService.fetchSettingsForCurrentUser$();
+        this.currentSettings$.subscribe(settings => {
+            this.settingsForm = this.formBuilder.group({
+                days: '' + settings.cooldownTime.days,
+                hours: '' + settings.cooldownTime.hours,
+                minutes: '' + settings.cooldownTime.minutes,
+                imageOcclusionActivated: !settings.disabledExerciseTypes.includes('IMAGE_OCCLUSION'),
+                multipleResponseQuestionActivated: !settings.disabledExerciseTypes.includes('MULTIPLE_RESPONSE_QUESTION'),
+                termPromptActivated: !settings.disabledExerciseTypes.includes('TERM_PROMPT'),
+                conceptKeysOfDisabledExercises: this.formBuilder.array([])
+            });
+            settings.conceptKeysOfDisabledExercises.sort()
+                .forEach(key => this.conceptKeysOfDisabledExercises.push(this.formBuilder.control(key)));
+        });
+    }
+
+    updateSettings() {
+        const newSettings: SharedConceptSettings = {
+            disabledExerciseTypes: [],
+            conceptKeysOfDisabledExercises: [],
+            cooldownTime: {
+                days: parseInt(this.settingsForm.value.days, 10),
+                hours: parseInt(this.settingsForm.value.hours, 10),
+                minutes: parseInt(this.settingsForm.value.minutes, 10)
+            }
+        };
+        if (!this.settingsForm.value.imageOcclusionActivated) {
+            newSettings.disabledExerciseTypes.push('IMAGE_OCCLUSION');
+        }
+        if (!this.settingsForm.value.multipleResponseQuestionActivated) {
+            newSettings.disabledExerciseTypes.push('MULTIPLE_RESPONSE_QUESTION');
+        }
+        if (!this.settingsForm.value.termPromptActivated) {
+            newSettings.disabledExerciseTypes.push('TERM_PROMPT');
+        }
+        newSettings.conceptKeysOfDisabledExercises = this.conceptKeysOfDisabledExercises.controls.map(control => control.value);
+        this.settingsService.saveSettings(newSettings).subscribe();
     }
 
     onHelpRequested() {
@@ -59,18 +95,6 @@ export class SettingsPage implements OnInit {
         }).then(modalElement => modalElement.present());
     }
 
-    onCooldownTimeChanged() {
-        const newCooldownTime: TimeSpan = {
-            days: parseInt(this.cooldownTimeDaySelect.value, 10),
-            hours: parseInt(this.cooldownTimeHourSelect.value, 10),
-            minutes: parseInt(this.cooldownTimeMinuteSelect.value, 10)
-        };
-        const changes: Partial<SharedConceptSettings> = {
-            cooldownTime: newCooldownTime
-        };
-        this.settingsService.saveSettings(changes).subscribe();
-    }
-
     getArrayWithNumbersFromZeroToN(n: number): number[] {
         // => [0,1,2,3...n]
         return Array.from(Array(n + 1).keys());
@@ -95,23 +119,6 @@ export class SettingsPage implements OnInit {
                 }
             ]
         }).then(toastElement => toastElement.present());
-    }
-
-    onActivatedExerciseTypesChanged() {
-        const disabledExerciseTypes = [];
-        if (!this.imageOcclusionToggle.checked) {
-            disabledExerciseTypes.push('IMAGE_OCCLUSION');
-        }
-        if (!this.multipleResponseQuestionToggle.checked) {
-            disabledExerciseTypes.push('MULTIPLE_RESPONSE_QUESTION');
-        }
-        if (!this.termPromptToggle.checked) {
-            disabledExerciseTypes.push('TERM_PROMPT');
-        }
-        const changes: Partial<SharedConceptSettings> = {
-            disabledExerciseTypes
-        };
-        this.settingsService.saveSettings(changes).subscribe();
     }
 }
 

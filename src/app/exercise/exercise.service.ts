@@ -69,6 +69,11 @@ export class ExerciseService {
                 if (exerciseTypeDisabled) {
                     return false;
                 }
+                const specificExerciseIsDisabled = settings.conceptKeysOfDisabledExercises &&
+                    settings.conceptKeysOfDisabledExercises.includes(concept.key);
+                if (specificExerciseIsDisabled) {
+                    return false;
+                }
                 const experience = experiencesOfCurrentUser[concept.key];
                 if (!experience) {
                     // if the user has no experience in a concept, it is time to get started ;)
