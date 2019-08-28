@@ -6,7 +6,7 @@ import {Concept} from '../concepts/concept.model';
 import {first, map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ExerciseService} from './exercise.service';
-import {AlertController, PopoverController} from '@ionic/angular';
+import {AlertController, LoadingController, PopoverController} from '@ionic/angular';
 import {ExerciseTypes} from './exercise.model';
 import {SharedConceptSettings} from '../settings/settings.model';
 import {SettingsService} from '../settings/settings.service';
@@ -30,7 +30,8 @@ export class ExercisePage implements OnInit {
         private exerciseService: ExerciseService,
         private alertController: AlertController,
         private settingsService: SettingsService,
-        private popoverController: PopoverController
+        private popoverController: PopoverController,
+        private loadingController: LoadingController
     ) {
     }
 
@@ -132,7 +133,14 @@ export class ExercisePage implements OnInit {
         return await popover.present();
     }
 
-    private disableCurrentExercise() {
+    private async disableCurrentExercise() {
+        const loadingIndicator = await this.loadingController.create({
+            message: 'Disabling exercise'
+        });
+        loadingIndicator.onWillDismiss().then(() => {
+            this.navigateToNextExercise();
+        });
+        await loadingIndicator.present();
         this.settings$.pipe(
             first(),
             withLatestFrom(this.concept$),
@@ -146,11 +154,17 @@ export class ExercisePage implements OnInit {
                 settings.conceptKeysOfDisabledExercises.push(concept.key);
                 return this.settingsService.saveSettings(settings);
             })
-        ).subscribe();
-        this.navigateToNextExercise();
+        ).subscribe(() => loadingIndicator.dismiss());
     }
 
-    private disableCurrentExerciseType() {
+    private async disableCurrentExerciseType() {
+        const loadingIndicator = await this.loadingController.create({
+            message: 'Disabling exercise type'
+        });
+        loadingIndicator.onWillDismiss().then(() => {
+            this.navigateToNextExercise();
+        });
+        await loadingIndicator.present();
         this.settings$.pipe(
             first(),
             withLatestFrom(this.concept$),
@@ -164,8 +178,7 @@ export class ExercisePage implements OnInit {
                 settings.disabledExerciseTypes.push(concept.exercise.type);
                 return this.settingsService.saveSettings(settings);
             })
-        ).subscribe();
-        this.navigateToNextExercise();
+        ).subscribe(() => loadingIndicator.dismiss());
     }
 }
 
