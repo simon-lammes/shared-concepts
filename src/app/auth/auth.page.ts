@@ -3,9 +3,6 @@ import * as firebase from 'firebase/app';
 import * as firebaseui from 'firebaseui';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {Router} from '@angular/router';
-import {HelpSection} from '../help-modal/help-section.model';
-import {HelpModalComponent} from '../help-modal/help-modal.component';
-import {ModalController} from '@ionic/angular';
 
 @Component({
     selector: 'app-auth',
@@ -20,8 +17,7 @@ export class AuthPage implements OnInit, OnDestroy {
     constructor(
         private afAuth: AngularFireAuth,
         private router: Router,
-        private ngZone: NgZone,
-        private modalController: ModalController
+        private ngZone: NgZone
     ) {
     }
 
@@ -56,22 +52,5 @@ export class AuthPage implements OnInit, OnDestroy {
         // Angular cannot know by itself that this method changes the view,
         // so we need to execute it inside the angular zone
         this.ngZone.run(() => this.router.navigateByUrl(redirectUrl));
-    }
-
-    onHelpRequested() {
-        const helpSections: HelpSection[] = [
-            {
-                topic: 'Sign in',
-                helpText: 'Our exercise features require you to sign in so that ' +
-                    'information about your learning progress and your settings can be linked to your account.'
-            }
-        ];
-        this.modalController.create({
-            component: HelpModalComponent,
-            componentProps: {
-                helpSections,
-                title: 'Login'
-            }
-        }).then(modalElement => modalElement.present());
     }
 }

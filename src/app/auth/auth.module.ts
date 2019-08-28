@@ -6,8 +6,6 @@ import {RouterModule, Routes} from '@angular/router';
 import {IonicModule} from '@ionic/angular';
 
 import {AuthPage} from './auth.page';
-import {HelpModalComponent} from '../help-modal/help-modal.component';
-import {HelpModalModule} from '../help-modal/help-modal.module';
 
 const routes: Routes = [
     {
@@ -21,14 +19,10 @@ const routes: Routes = [
         CommonModule,
         FormsModule,
         IonicModule,
-        RouterModule.forChild(routes),
-        HelpModalModule
+        RouterModule.forChild(routes)
     ],
     declarations: [
         AuthPage
-    ],
-    entryComponents: [
-        HelpModalComponent
     ]
 })
 export class AuthPageModule {

@@ -30,8 +30,10 @@ const routes: Routes = [
         path: 'settings',
         loadChildren: './settings/settings.module#SettingsPageModule'
     },
-
-
+    {
+        path: 'help',
+        loadChildren: './help/help.module#HelpPageModule'
+    },
 ];
 
 @NgModule({

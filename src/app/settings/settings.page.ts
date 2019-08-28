@@ -1,7 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {AlertController, ModalController} from '@ionic/angular';
-import {HelpModalComponent} from '../help-modal/help-modal.component';
-import {HelpSection} from '../help-modal/help-section.model';
 import {Observable} from 'rxjs';
 import {SharedConceptSettings} from './settings.model';
 import {SettingsService} from './settings.service';
@@ -70,33 +68,6 @@ export class SettingsPage implements OnInit {
         }
         newSettings.conceptKeysOfDisabledExercises = this.conceptKeysOfDisabledExercises.controls.map(control => control.value);
         this.settingsService.saveSettings(newSettings).subscribe();
-    }
-
-    onHelpRequested() {
-        const helpSections: HelpSection[] = [
-            {
-                topic: 'Cooldown Time',
-                helpText: 'The cooldown time describes for how long an exercise ' +
-                    'cannot be presented to you after you have seen the solution. ' +
-                    'Its purpose is to diversify your learning experience.'
-            },
-            {
-                topic: 'Clear Cache',
-                helpText: 'Clearing the cache helps when the concepts on the server have changed and you want to get those changes. ' +
-                    'By clearing the cache, all concepts have to be fetched again and thereby you get the new concepts.'
-            },
-            {
-                topic: 'Activated Exercise Types',
-                helpText: 'There are different types of exercises. Only exercising with types that you activated will be shown to you.'
-            }
-        ];
-        this.modalController.create({
-            component: HelpModalComponent,
-            componentProps: {
-                helpSections,
-                title: 'Settings'
-            }
-        }).then(modalElement => modalElement.present());
     }
 
     getArrayWithNumbersFromZeroToN(n: number): number[] {
