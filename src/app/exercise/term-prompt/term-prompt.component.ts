@@ -12,7 +12,7 @@ export class TermPromptComponent implements OnChanges {
     @Input() termPromptExercise: Exercise;
     @Input() activated: boolean;
     @Output() correctlyAnswered: EventEmitter<boolean> = new EventEmitter<boolean>();
-    @ViewChild('answer') answerField: IonInput;
+    @ViewChild('answer', {static: false}) answerField: IonInput;
     exercise: FormGroup;
 
     constructor(

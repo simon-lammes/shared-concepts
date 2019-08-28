@@ -14,14 +14,16 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/common": "^7.2.2",
-    "@angular/core": "^7.2.2",
+    "@angular/common": "^8.2.4",
+    "@angular/compiler": "^8.2.4",
+    "@angular/compiler-cli": "^8.2.4",
+    "@angular/core": "^8.2.4",
     "@angular/fire": "^5.2.1",
-    "@angular/forms": "^7.2.2",
+    "@angular/forms": "^8.2.4",
     "@angular/http": "^7.2.2",
-    "@angular/platform-browser": "^7.2.2",
-    "@angular/platform-browser-dynamic": "^7.2.2",
-    "@angular/router": "^7.2.2",
+    "@angular/platform-browser": "^8.2.4",
+    "@angular/platform-browser-dynamic": "^8.2.4",
+    "@angular/router": "^8.2.4",
     "@capacitor/cli": "^1.1.1",
     "@capacitor/core": "^1.1.1",
     "@ionic-native/core": "^5.0.0",
@@ -39,21 +41,19 @@
     "ngxs-reset-plugin": "^1.1.1",
     "rxjs": "~6.5.1",
     "tslib": "^1.9.0",
-    "zone.js": "~0.8.29"
+    "zone.js": "^0.10.2"
   },
   "devDependencies": {
     "@angular-devkit/architect": "~0.13.8",
-    "@angular-devkit/build-angular": "~0.13.8",
+    "@angular-devkit/build-angular": "~0.803.1",
     "@angular-devkit/core": "~7.3.8",
     "@angular-devkit/schematics": "~7.3.8",
-    "@angular/cli": "~7.3.8",
-    "@angular/compiler": "~7.2.2",
-    "@angular/compiler-cli": "~7.2.2",
-    "@angular/language-service": "~7.2.2",
+    "@angular/cli": "~8.3.1",
+    "@angular/language-service": "~8.2.4",
     "@ionic/angular-toolkit": "~1.5.1",
-    "@types/node": "~12.6.6",
     "@types/jasmine": "~2.8.8",
     "@types/jasminewd2": "~2.0.3",
+    "@types/node": "~12.6.6",
     "codelyzer": "~4.5.0",
     "jasmine-core": "~2.99.1",
     "jasmine-spec-reporter": "~4.2.1",
@@ -65,7 +65,7 @@
     "protractor": "~5.4.0",
     "ts-node": "~8.3.0",
     "tslint": "~5.17.0",
-    "typescript": "~3.1.6"
+    "typescript": "~3.5.3"
   },
   "description": "An Ionic project"
 }
