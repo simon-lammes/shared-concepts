@@ -7,7 +7,7 @@ import {SharedConceptSettings} from './settings.model';
 import {SettingsService} from './settings.service';
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {Store} from '@ngxs/store';
-import {StateClear, StateResetAll} from 'ngxs-reset-plugin';
+import {StateClear} from 'ngxs-reset-plugin';
 
 @Component({
     selector: 'app-settings',
@@ -114,9 +114,10 @@ export class SettingsPage implements OnInit {
                 {
                     text: 'clear state',
                     handler: () => {
-                        // StateClear clears everything and StateResetAll brings back the default values
-                        // for some reason StateResetAll alone would not clear the old values
-                        this.store.dispatch([new StateClear(), new StateResetAll()]);
+                        this.store.dispatch(new StateClear());
+                        // I found no other way to bring the state back to default than to refresh the page.
+                        // You would expect the action StateResetAll to do the job, but somehow it does not work.
+                        location.reload();
                     }
                 },
                 {
