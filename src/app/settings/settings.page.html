@@ -13,8 +13,13 @@
 </ion-header>
 
 <ion-content>
-    <form *ngIf="settingsForm" [formGroup]="settingsForm">
-        <ion-grid>
+    <ion-grid>
+        <ion-row *ngIf="!settingsForm">
+            <ion-col size="12" size-sm="8" offset-sm="2">
+                <app-spinner *ngIf="!settingsForm"></app-spinner>
+            </ion-col>
+        </ion-row>
+        <form *ngIf="settingsForm" [formGroup]="settingsForm">
             <ion-row>
                 <ion-col size="12" size-sm="8" offset-sm="2">
                     <ion-list>
@@ -23,21 +28,24 @@
                         </ion-list-header>
                         <ion-item>
                             <ion-label>Days</ion-label>
-                            <ion-select formControlName="days" okText="Set" cancelText="Dismiss" (ionChange)="updateSettings()">
+                            <ion-select formControlName="days" okText="Set" cancelText="Dismiss"
+                                        (ionChange)="updateSettings()">
                                 <ion-select-option *ngFor="let value of getArrayWithNumbersFromZeroToN(14)"
                                                    value="{{ value }}">{{ value }}</ion-select-option>
                             </ion-select>
                         </ion-item>
                         <ion-item>
                             <ion-label>Hours</ion-label>
-                            <ion-select formControlName="hours" okText="Set" cancelText="Dismiss" (ionChange)="updateSettings()">
+                            <ion-select formControlName="hours" okText="Set" cancelText="Dismiss"
+                                        (ionChange)="updateSettings()">
                                 <ion-select-option *ngFor="let value of getArrayWithNumbersFromZeroToN(23)"
                                                    value="{{ value }}">{{ value }}</ion-select-option>
                             </ion-select>
                         </ion-item>
                         <ion-item>
                             <ion-label>Minutes</ion-label>
-                            <ion-select formControlName="minutes" okText="Set" cancelText="Dismiss" (ionChange)="updateSettings()">
+                            <ion-select formControlName="minutes" okText="Set" cancelText="Dismiss"
+                                        (ionChange)="updateSettings()">
                                 <ion-select-option *ngFor="let value of getArrayWithNumbersFromZeroToN(59)"
                                                    value="{{ value }}">{{ value }}</ion-select-option>
                             </ion-select>
@@ -53,15 +61,18 @@
                         </ion-list-header>
                         <ion-item>
                             <ion-label>Image Occlusion</ion-label>
-                            <ion-toggle formControlName="imageOcclusionActivated" slot="end" (ionChange)="updateSettings()"></ion-toggle>
+                            <ion-toggle formControlName="imageOcclusionActivated" slot="end"
+                                        (ionChange)="updateSettings()"></ion-toggle>
                         </ion-item>
                         <ion-item>
                             <ion-label>Multiple Response Question</ion-label>
-                            <ion-toggle formControlName="multipleResponseQuestionActivated" slot="end" (ionChange)="updateSettings()"></ion-toggle>
+                            <ion-toggle formControlName="multipleResponseQuestionActivated" slot="end"
+                                        (ionChange)="updateSettings()"></ion-toggle>
                         </ion-item>
                         <ion-item>
                             <ion-label>Term Prompt</ion-label>
-                            <ion-toggle formControlName="termPromptActivated" slot="end" (ionChange)="updateSettings()"></ion-toggle>
+                            <ion-toggle formControlName="termPromptActivated" slot="end"
+                                        (ionChange)="updateSettings()"></ion-toggle>
                         </ion-item>
                     </ion-list>
                 </ion-col>
@@ -72,8 +83,10 @@
                         <ion-list-header>
                             Deactivated Exercises
                         </ion-list-header>
-                        <ion-item *ngFor="let conceptKeyOfDisabledExercise of conceptKeysOfDisabledExercises.controls; let i=index">
-                            <ion-icon (click)="conceptKeysOfDisabledExercises.removeAt(i); updateSettings();" slot="end" name="close"></ion-icon>
+                        <ion-item
+                                *ngFor="let conceptKeyOfDisabledExercise of conceptKeysOfDisabledExercises.controls; let i=index">
+                            <ion-icon (click)="conceptKeysOfDisabledExercises.removeAt(i); updateSettings();" slot="end"
+                                      name="close"></ion-icon>
                             <ion-label>{{ conceptKeyOfDisabledExercise.value }}</ion-label>
                         </ion-item>
                         <ion-item *ngIf="conceptKeysOfDisabledExercises.length < 1">
@@ -89,6 +102,6 @@
                     </ion-button>
                 </ion-col>
             </ion-row>
-        </ion-grid>
-    </form>
+        </form>
+    </ion-grid>
 </ion-content>

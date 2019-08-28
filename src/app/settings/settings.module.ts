@@ -8,6 +8,7 @@ import {IonicModule} from '@ionic/angular';
 import {SettingsPage} from './settings.page';
 import {HelpModalComponent} from '../help-modal/help-modal.component';
 import {HelpModalModule} from '../help-modal/help-modal.module';
+import {SharedModule} from '../shared/shared.module';
 
 const routes: Routes = [
     {
@@ -23,7 +24,8 @@ const routes: Routes = [
         IonicModule,
         RouterModule.forChild(routes),
         HelpModalModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        SharedModule
     ],
     declarations: [
         SettingsPage
