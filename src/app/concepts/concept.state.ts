@@ -5,8 +5,8 @@ import {
     LoadConcept,
     LoadConcepts,
     LoadFoundationConceptsToStudyRecursively,
-    LoadTopLevelConcepts,
-    NavigatedToConceptKey
+    NavigatedToConceptKey,
+    TopLevelConceptsRequested
 } from './concept.actions';
 import {ConceptsService} from './concepts.service';
 import {concatMap, map} from 'rxjs/operators';
@@ -57,8 +57,8 @@ export class ConceptState  {
         return Object.keys(state.allConceptsToStudyKeys);
     }
 
-    @Action(LoadTopLevelConcepts)
-    loadTopLevelConcepts(ctx: StateContext<ConceptStateModel>) {
+    @Action(TopLevelConceptsRequested)
+    topLevelConceptsRequested(ctx: StateContext<ConceptStateModel>) {
         const state = ctx.getState();
         if (state.topLevelConceptKeys.length > 0) {
             return ctx.dispatch(new LoadConcepts(state.topLevelConceptKeys));

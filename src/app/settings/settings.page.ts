@@ -7,7 +7,7 @@ import {SharedConceptSettings} from './settings.model';
 import {SettingsService} from './settings.service';
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {Store} from '@ngxs/store';
-import {StateResetAll} from 'ngxs-reset-plugin';
+import {StateClear, StateResetAll} from 'ngxs-reset-plugin';
 
 @Component({
     selector: 'app-settings',
@@ -18,9 +18,6 @@ export class SettingsPage implements OnInit {
 
     settingsForm: FormGroup;
     currentSettings$: Observable<SharedConceptSettings>;
-    get conceptKeysOfDisabledExercises() {
-        return this.settingsForm.get('conceptKeysOfDisabledExercises') as FormArray;
-    }
 
     constructor(
         private modalController: ModalController,
@@ -29,6 +26,10 @@ export class SettingsPage implements OnInit {
         private formBuilder: FormBuilder,
         private store: Store
     ) {
+    }
+
+    get conceptKeysOfDisabledExercises() {
+        return this.settingsForm.get('conceptKeysOfDisabledExercises') as FormArray;
     }
 
     ngOnInit() {
@@ -113,8 +114,9 @@ export class SettingsPage implements OnInit {
                 {
                     text: 'clear state',
                     handler: () => {
-                        console.log('clear state');
-                        this.store.dispatch(new StateResetAll());
+                        // StateClear clears everything and StateResetAll brings back the default values
+                        // for some reason StateResetAll alone would not clear the old values
+                        this.store.dispatch([new StateClear(), new StateResetAll()]);
                     }
                 },
                 {

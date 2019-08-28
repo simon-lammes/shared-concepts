@@ -1,6 +1,6 @@
 import {Concept} from './concept.model';
 
-export class LoadTopLevelConcepts {
+export class TopLevelConceptsRequested {
     static readonly type = '[Concept Page] Load Top Level Concepts';
 }
 
