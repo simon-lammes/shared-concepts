@@ -6,8 +6,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {Select, Store} from '@ngxs/store';
 import {ConceptState} from './concept.state';
 import {ChooseConceptToStudy, NavigatedToConceptKey, TopLevelConceptsRequested} from './concept.actions';
-import {showHelpModalForConceptsPage} from './concepts.help';
-import {ModalController} from '@ionic/angular';
+import {LoadingController, ModalController} from '@ionic/angular';
 
 @Component({
     selector: 'app-concepts',
@@ -25,7 +24,8 @@ export class ConceptsPage implements OnInit, OnDestroy {
         private store: Store,
         private route: ActivatedRoute,
         private router: Router,
-        private modalController: ModalController
+        private modalController: ModalController,
+        private loadingController: LoadingController
     ) {
     }
 
@@ -55,12 +55,14 @@ export class ConceptsPage implements OnInit, OnDestroy {
         );
     }
 
-    studyConcept(chosenConcept: Concept) {
+    async studyConcept(chosenConcept: Concept) {
+        const loadingElement = await this.loadingController.create({
+            message: 'Preparing your exercises'
+        });
+        await loadingElement.present();
         this.store.dispatch(new ChooseConceptToStudy(chosenConcept));
-        this.router.navigateByUrl('/exercise');
-    }
-
-    onHelpRequested() {
-        showHelpModalForConceptsPage(this.modalController);
+        this.router.navigateByUrl('/exercise').then(() => {
+            loadingElement.dismiss();
+        });
     }
 }
