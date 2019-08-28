@@ -15,8 +15,9 @@
 <ion-content>
     <ion-grid>
         <ion-row>
-            <ion-col size="12" size-sm="8" offset-sm="2">
+            <ion-col size="12" size-sm="6" offset-sm="3">
                 <ion-card>
+                    <img *ngIf="(imageUrlOfInspectedConcept$ | async) as imageUrl" [src]="imageUrl" alt="">
                     <ion-card-header>
                         <ion-card-title
                                 *ngIf="(inspectedConcept$ | async) as inspectedConcept">{{ inspectedConcept.title }}</ion-card-title>

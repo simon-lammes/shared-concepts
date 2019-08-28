@@ -6,4 +6,5 @@ export interface Concept {
     foundationKeys: string[];
     description?: string;
     exercise?: Exercise;
+    imageKey?: string;
 }

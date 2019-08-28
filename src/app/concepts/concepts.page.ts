@@ -7,6 +7,7 @@ import {Select, Store} from '@ngxs/store';
 import {ConceptState} from './concept.state';
 import {ChooseConceptToStudy, NavigatedToConceptKey, TopLevelConceptsRequested} from './concept.actions';
 import {LoadingController, ModalController} from '@ionic/angular';
+import {environment} from '../../environments/environment.prod';
 
 @Component({
     selector: 'app-concepts',
@@ -19,6 +20,7 @@ export class ConceptsPage implements OnInit, OnDestroy {
     @Select(ConceptState.topLevelConceptsKeys) topLevelConceptKeys$: Observable<string[]>;
     displayedConcepts$: Observable<Concept[]>;
     inspectedConcept$: Observable<Concept>;
+    imageUrlOfInspectedConcept$: Observable<string>;
 
     constructor(
         private store: Store,
@@ -51,6 +53,14 @@ export class ConceptsPage implements OnInit, OnDestroy {
                     return topLevelConceptKeys.map(key => conceptMap[key]).filter(concept => !!concept);
                 }
                 return inspectedConcept.foundationKeys.map(key => conceptMap[key]).filter(concept => !!concept);
+            })
+        );
+        this.imageUrlOfInspectedConcept$ = this.inspectedConcept$.pipe(
+            map(concept => {
+                if (!concept || !concept.imageKey) {
+                    return undefined;
+                }
+                return `${environment.exerciseURL}/Images/${concept.imageKey}`;
             })
         );
     }
