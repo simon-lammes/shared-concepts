@@ -1,5 +1,5 @@
 import {Concept} from './concept.model';
-import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
+import {Action, Selector, State, StateContext} from '@ngxs/store';
 import {
     ChooseConceptToStudy,
     LoadConcept,
@@ -32,7 +32,7 @@ export interface ConceptStateModel {
         allConceptsToStudyKeys: {}
     }
 })
-export class ConceptState implements NgxsOnInit {
+export class ConceptState  {
 
     constructor(private conceptsService: ConceptsService) {
     }
@@ -55,10 +55,6 @@ export class ConceptState implements NgxsOnInit {
     @Selector()
     static allConceptsToStudyKeys(state: ConceptStateModel): string[] {
         return Object.keys(state.allConceptsToStudyKeys);
-    }
-
-    ngxsOnInit(ctx: StateContext<ConceptStateModel>) {
-        ctx.dispatch(new LoadTopLevelConcepts());
     }
 
     @Action(LoadTopLevelConcepts)

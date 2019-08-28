@@ -6,6 +6,8 @@ import {Observable} from 'rxjs';
 import {SharedConceptSettings} from './settings.model';
 import {SettingsService} from './settings.service';
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
+import {Store} from '@ngxs/store';
+import {StateResetAll} from 'ngxs-reset-plugin';
 
 @Component({
     selector: 'app-settings',
@@ -24,7 +26,8 @@ export class SettingsPage implements OnInit {
         private modalController: ModalController,
         private settingsService: SettingsService,
         private alertController: AlertController,
-        private formBuilder: FormBuilder
+        private formBuilder: FormBuilder,
+        private store: Store
     ) {
     }
 
@@ -100,17 +103,18 @@ export class SettingsPage implements OnInit {
         return Array.from(Array(n + 1).keys());
     }
 
-    onClearCacheRequested() {
+    onClearConceptStateRequested() {
         this.alertController.create({
-            header: 'Clear Cache',
-            message: 'When you clear the cache, all concepts have to be fetched again from the server. ' +
+            header: 'Clear Concept State',
+            message: 'When you clear the state, all concepts have to be fetched again from the server. ' +
                 'Nevertheless, this is not a dangerous operation. ' +
                 'This operation is useful when you want to fetch the newest concepts from the server.',
             buttons: [
                 {
-                    text: 'remove concepts from cache',
+                    text: 'clear state',
                     handler: () => {
-                        localStorage.removeItem('@@STATE');
+                        console.log('clear state');
+                        this.store.dispatch(new StateResetAll());
                     }
                 },
                 {

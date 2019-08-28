@@ -5,7 +5,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Select, Store} from '@ngxs/store';
 import {ConceptState} from './concept.state';
-import {ChooseConceptToStudy, NavigatedToConceptKey} from './concept.actions';
+import {ChooseConceptToStudy, LoadTopLevelConcepts, NavigatedToConceptKey} from './concept.actions';
 import {showHelpModalForConceptsPage} from './concepts.help';
 import {ModalController} from '@ionic/angular';
 
@@ -36,6 +36,8 @@ export class ConceptsPage implements OnInit, OnDestroy {
         const conceptKey = this.route.snapshot.paramMap.get('conceptKey');
         if (conceptKey) {
             this.store.dispatch(new NavigatedToConceptKey(conceptKey));
+        } else {
+            this.store.dispatch(new LoadTopLevelConcepts());
         }
         this.inspectedConcept$ = this.conceptMap$.pipe(
             map(conceptMap => {

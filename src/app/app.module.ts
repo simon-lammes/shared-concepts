@@ -17,11 +17,8 @@ import {HttpClientModule} from '@angular/common/http';
 import {NgxsModule} from '@ngxs/store';
 import {ConceptState} from './concepts/concept.state';
 import {NgxsStoragePluginModule} from '@ngxs/storage-plugin';
+import {NgxsResetPluginModule} from 'ngxs-reset-plugin';
 
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
-// @ts-ignore
 @NgModule({
     declarations: [AppComponent],
     entryComponents: [],
@@ -39,7 +36,8 @@ import {NgxsStoragePluginModule} from '@ngxs/storage-plugin';
         ], {
             developmentMode: !environment.production
         }),
-        NgxsStoragePluginModule.forRoot()
+        NgxsStoragePluginModule.forRoot(),
+        NgxsResetPluginModule.forRoot()
     ],
     providers: [
         StatusBar,
