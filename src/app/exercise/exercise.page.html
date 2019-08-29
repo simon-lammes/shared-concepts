@@ -45,6 +45,10 @@
                                  (correctlyAnswered)="onAnswered($event)"
                                  [termPromptExercise]="concept.exercise"
                                  [activated]="answeredCorrectly === undefined"></app-term-prompt>
+                <app-multiple-response-question *ngIf="concept.exercise?.type.toString() === 'MULTIPLE_RESPONSE_QUESTION'"
+                                 (correctlyAnswered)="onAnswered($event)"
+                                 [multipleResponseQuestion]="concept.exercise"
+                                 [activated]="answeredCorrectly === undefined"></app-multiple-response-question>
             </ion-col>
         </ion-row>
         <ion-row *ngIf="(answeredCorrectly !== undefined) && (concept$ | async) as concept">

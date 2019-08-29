@@ -10,6 +10,7 @@ import {TermPromptComponent} from './term-prompt/term-prompt.component';
 import {ExplanationComponent} from './explanation/explanation.component';
 import {ExerciseTypeUnknownComponent} from './exercise-type-unknown/exercise-type-unknown.component';
 import {MoreRequestedComponent} from './more-requested/more-requested.component';
+import {MultipleResponseQuestionComponent} from './multiple-response-question/multiple-response-question.component';
 
 const routes: Routes = [
     {
@@ -36,7 +37,8 @@ const routes: Routes = [
         ExplanationComponent,
         ExercisePage,
         ExerciseTypeUnknownComponent,
-        MoreRequestedComponent
+        MoreRequestedComponent,
+        MultipleResponseQuestionComponent
     ],
     entryComponents: [
         MoreRequestedComponent

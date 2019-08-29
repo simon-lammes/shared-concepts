@@ -1,0 +1,12 @@
+<form [formGroup]="exerciseForm" (ngSubmit)="submitAnswer()">
+    <p>{{ multipleResponseQuestion.front }}</p>
+    <ion-list formArrayName="responseOptions">
+        <ion-item *ngFor="let responseOption of responseOptionsFormArray.controls; let i=index">
+            {{ responseOptions[i] }}
+            <ion-checkbox slot="end" [formControlName]="i.toString()"></ion-checkbox>
+        </ion-item>
+    </ion-list>
+    <ion-button *ngIf="activated" type="submit" color="primary" size="large" expand="block">
+        Check Answer
+    </ion-button>
+</form>
