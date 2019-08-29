@@ -18,6 +18,7 @@ import {NgxsModule} from '@ngxs/store';
 import {ConceptState} from './concepts/concept.state';
 import {NgxsStoragePluginModule} from '@ngxs/storage-plugin';
 import {NgxsResetPluginModule} from 'ngxs-reset-plugin';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @NgModule({
     declarations: [AppComponent],
@@ -37,7 +38,8 @@ import {NgxsResetPluginModule} from 'ngxs-reset-plugin';
             developmentMode: !environment.production
         }),
         NgxsStoragePluginModule.forRoot(),
-        NgxsResetPluginModule.forRoot()
+        NgxsResetPluginModule.forRoot(),
+        BrowserAnimationsModule
     ],
     providers: [
         StatusBar,

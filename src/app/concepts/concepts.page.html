@@ -3,7 +3,7 @@
         <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
-        <ion-buttons slot="secondary" *ngIf="(inspectedConcept$ | async) as inspectedConcept">
+        <ion-buttons slot="end" *ngIf="(inspectedConcept$ | async) as inspectedConcept">
             <ion-button color="primary" (click)="studyConcept(inspectedConcept)">
                 Study this topic
             </ion-button>

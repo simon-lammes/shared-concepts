@@ -5,7 +5,7 @@
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
         <ion-buttons slot="end">
-            <ion-button href="/help">
+            <ion-button [routerLink]="['/help']" [queryParams]="{ settings: true }">
                 <ion-icon name="help" slot="icon-only"></ion-icon>
             </ion-button>
         </ion-buttons>

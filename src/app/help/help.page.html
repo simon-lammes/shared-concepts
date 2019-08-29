@@ -1,9 +1,75 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>help</ion-title>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-title>Help</ion-title>
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+    <mat-accordion>
+        <mat-expansion-panel [expanded]="sectionExpanded['settings'] === 'true'"
+                             (opened)="changeSectionExpanded('settings', true)"
+                             (closed)="changeSectionExpanded('settings', false)">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Settings
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-accordion>
+                <mat-expansion-panel [expanded]="sectionExpanded['activatedExerciseType'] === 'true'"
+                                     (opened)="changeSectionExpanded('activatedExerciseType', true)"
+                                     (closed)="changeSectionExpanded('activatedExerciseType', false)">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            Activated Exercise Types
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <p>There are different types of exercises. Only exercises of types that you activated will be
+                        shown to you.</p>
+                </mat-expansion-panel>
+            </mat-accordion>
+            <mat-accordion>
+                <mat-expansion-panel [expanded]="sectionExpanded['clearCache'] === 'true'"
+                                     (opened)="changeSectionExpanded('clearCache', true)"
+                                     (closed)="changeSectionExpanded('clearCache', false)">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            Clear Cache
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <p>Clearing the cache helps when the concepts on the server have changed and you want to get those
+                        changes. By clearing the cache, all concepts have to be fetched again and thereby you get the
+                        new concepts.</p>
+                </mat-expansion-panel>
+            </mat-accordion>
+            <mat-accordion>
+                <mat-expansion-panel [expanded]="sectionExpanded['cooldownTime'] === 'true'"
+                                     (opened)="changeSectionExpanded('cooldownTime', true)"
+                                     (closed)="changeSectionExpanded('cooldownTime', false)">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            Cooldown Time
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <p>The cooldown time describes for how long an exercise cannot be presented to you after you have
+                        seen the solution. Its purpose is to diversify your learning experience.</p>
+                </mat-expansion-panel>
+            </mat-accordion>
+            <mat-accordion>
+                <mat-expansion-panel [expanded]="sectionExpanded['deactivatedExercises'] === 'true'"
+                                     (opened)="changeSectionExpanded('deactivatedExercises', true)"
+                                     (closed)="changeSectionExpanded('deactivatedExercises', false)">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            Deactivated Exercises
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <p>Deactivated exercises will not be shown to you any more. You can activate them by clicking on the
+                        X. You can only deactivate an exercise while it is shown to you during exercise.</p>
+                </mat-expansion-panel>
+            </mat-accordion>
+        </mat-expansion-panel>
+    </mat-accordion>
 </ion-content>
