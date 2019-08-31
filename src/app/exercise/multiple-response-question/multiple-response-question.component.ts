@@ -61,4 +61,14 @@ export class MultipleResponseQuestionComponent implements OnInit, OnChanges {
             responseOptions: this.formBuilder.array(this.responseOptions.map(() => false))
         });
     }
+
+    // after the user submitted his answeres we should color the options to indicate which ones are correct
+    getColorForResponseOption(responseOption: string) {
+        if (this.activated) {
+            // the user has not yet answered so he should not see any hint
+            return undefined;
+        }
+        const itemDisplaysCorrectAnswer = this.multipleResponseQuestion.correctResponses.includes(responseOption);
+        return itemDisplaysCorrectAnswer ? 'success' : 'danger';
+    }
 }
