@@ -13,7 +13,22 @@
 </ion-header>
 
 <ion-content>
-    <div id="auth-container">
+    <ion-grid>
+        <ion-row>
+            <ion-col size="12" size-sm="6" offset-sm="3">
+                <ion-card>
+                    <ion-item>
+                        <ion-icon name="alert" slot="start"></ion-icon>
+                        <ion-label>Sign in with GitHub recommended</ion-label>
+                    </ion-item>
+                    <ion-card-content>
+                        If you would like to contribute to the content of this application by adding and editing exercises, we recommend signing in with GitHub.
+                    </ion-card-content>
+                </ion-card>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
 
+    <div id="auth-container">
     </div>
 </ion-content>

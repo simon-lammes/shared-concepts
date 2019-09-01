@@ -28,6 +28,7 @@ export class AuthPage implements OnInit, OnDestroy {
     ngOnInit() {
         this.uiConfig = {
             signInOptions: [
+                firebase.auth.GithubAuthProvider.PROVIDER_ID,
                 firebase.auth.GoogleAuthProvider.PROVIDER_ID,
                 firebase.auth.EmailAuthProvider.PROVIDER_ID
             ],
