@@ -11,6 +11,7 @@ import {ExplanationComponent} from './explanation/explanation.component';
 import {ExerciseTypeUnknownComponent} from './exercise-type-unknown/exercise-type-unknown.component';
 import {MoreRequestedComponent} from './more-requested/more-requested.component';
 import {MultipleResponseQuestionComponent} from './multiple-response-question/multiple-response-question.component';
+import {ShowdownModule} from 'ngx-showdown';
 
 const routes: Routes = [
     {
@@ -29,7 +30,8 @@ const routes: Routes = [
         FormsModule,
         IonicModule,
         RouterModule.forChild(routes),
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        ShowdownModule
     ],
     declarations: [
         ExercisePage,

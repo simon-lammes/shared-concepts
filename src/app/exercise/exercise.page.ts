@@ -11,6 +11,7 @@ import {ExerciseTypes} from './exercise.model';
 import {SharedConceptSettings} from '../settings/settings.model';
 import {SettingsService} from '../settings/settings.service';
 import {MoreRequestedComponent, MoreRequestedData} from './more-requested/more-requested.component';
+import {HttpClient} from '@angular/common/http';
 
 @Component({
     selector: 'app-exercise',
@@ -23,6 +24,8 @@ export class ExercisePage implements OnInit {
     concept$: Observable<Concept>;
     settings$: Observable<SharedConceptSettings>;
     answeredCorrectly: boolean = undefined;
+    frontCodeSnippetMarkdown$: Observable<string>;
+    backCodeSnippetMarkdown$: Observable<string>;
 
     constructor(
         private route: ActivatedRoute,
@@ -31,7 +34,8 @@ export class ExercisePage implements OnInit {
         private alertController: AlertController,
         private settingsService: SettingsService,
         private popoverController: PopoverController,
-        private loadingController: LoadingController
+        private loadingController: LoadingController,
+        private httpClient: HttpClient
     ) {
     }
 
@@ -63,6 +67,24 @@ export class ExercisePage implements OnInit {
             })
         );
         this.settings$ = this.settingsService.fetchSettingsForCurrentUser$();
+        this.frontCodeSnippetMarkdown$ = this.concept$.pipe(
+            switchMap(concept => {
+                if (!concept || !concept.exercise || !concept.exercise.frontCodeSnippet) {
+                    return of('');
+                }
+                const url = `https://simon-lammes.github.io/ExerciseAPI/Markdown/${concept.exercise.frontCodeSnippet.key}.javascript.md`;
+                return this.httpClient.get(url, {responseType: 'text'});
+            })
+        );
+        this.backCodeSnippetMarkdown$ = this.concept$.pipe(
+            switchMap(concept => {
+                if (!concept || !concept.exercise || !concept.exercise.backCodeSnippet) {
+                    return of('');
+                }
+                const url = `https://simon-lammes.github.io/ExerciseAPI/Markdown/${concept.exercise.backCodeSnippet.key}.javascript.md`;
+                return this.httpClient.get(url, {responseType: 'text'});
+            })
+        );
     }
 
     onAnswered(answeredCorrectly: boolean) {
@@ -121,6 +143,9 @@ export class ExercisePage implements OnInit {
         });
         popover.onWillDismiss().then(input => {
             const data: MoreRequestedData = input.data;
+            if (!data) {
+                return;
+            }
             switch (data.chosenOption) {
                 case 'DISABLE_EXERCISE':
                     this.disableCurrentExercise();

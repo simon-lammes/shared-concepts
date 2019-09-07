@@ -1,5 +1,6 @@
 <form [formGroup]="exerciseForm" (ngSubmit)="submitAnswer()">
     <p>{{ multipleResponseQuestion.front }}</p>
+    <showdown [value]="frontCodeSnippetMarkdown"></showdown>
     <ion-list formArrayName="responseOptions">
         <ion-item [color]="getColorForResponseOption(responseOptions[i])" *ngFor="let responseOption of responseOptionsFormArray.controls; let i=index">
             {{ responseOptions[i] }}

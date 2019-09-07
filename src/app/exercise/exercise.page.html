@@ -40,22 +40,26 @@
         </ion-row>
         <ion-row *ngIf="(concept$ | async) as concept">
             <ion-col size="12" size-sm="8" offset-sm="2">
-                <app-exercise-type-unknown *ngIf="isCurrentExerciseTypeUnknown$ | async" (disableExerciseAndContinue)="disableCurrentExercise()"></app-exercise-type-unknown>
+                <app-exercise-type-unknown *ngIf="isCurrentExerciseTypeUnknown$ | async"
+                                           (disableExerciseAndContinue)="disableCurrentExercise()"></app-exercise-type-unknown>
                 <app-term-prompt *ngIf="concept.exercise?.type.toString() === 'TERM_PROMPT'"
                                  (correctlyAnswered)="onAnswered($event)"
                                  [termPromptExercise]="concept.exercise"
                                  [activated]="answeredCorrectly === undefined"></app-term-prompt>
-                <app-multiple-response-question *ngIf="concept.exercise?.type.toString() === 'MULTIPLE_RESPONSE_QUESTION'"
-                                 (correctlyAnswered)="onAnswered($event)"
-                                 [multipleResponseQuestion]="concept.exercise"
-                                 [activated]="answeredCorrectly === undefined"></app-multiple-response-question>
+                <app-multiple-response-question
+                        *ngIf="concept.exercise?.type.toString() === 'MULTIPLE_RESPONSE_QUESTION'"
+                        (correctlyAnswered)="onAnswered($event)"
+                        [multipleResponseQuestion]="concept.exercise"
+                        [activated]="answeredCorrectly === undefined"
+                        [frontCodeSnippetMarkdown]="frontCodeSnippetMarkdown$ | async"></app-multiple-response-question>
             </ion-col>
         </ion-row>
         <ion-row *ngIf="(answeredCorrectly !== undefined) && (concept$ | async) as concept">
             <ion-col size="12" size-sm="8"
                      offset-sm="2">
                 <ion-card>
-                    <img *ngIf="answeredCorrectly === true" height="200px" width="200px" src="./../../assets/approved.svg"
+                    <img *ngIf="answeredCorrectly === true" height="200px" width="200px"
+                         src="./../../assets/approved.svg"
                          alt="Correct"/>
                     <img *ngIf="answeredCorrectly === false" height="200px" width="200px"
                          src="./../../assets/wrong_red_cross.svg" alt="Wrong"/>
@@ -63,7 +67,7 @@
                         <ion-card-title>{{ concept.title }}</ion-card-title>
                     </ion-card-header>
                     <ion-card-content>
-                        <app-explanation [exercise]="concept.exercise"></app-explanation>
+                        <app-explanation [exercise]="concept.exercise" [backCodeSnippetMarkdown]="backCodeSnippetMarkdown$ | async"></app-explanation>
                         <ion-button expand="block" size="large" (click)="navigateToNextExercise()">Continue</ion-button>
                     </ion-card-content>
                 </ion-card>

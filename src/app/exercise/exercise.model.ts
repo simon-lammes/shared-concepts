@@ -5,6 +5,13 @@ export interface Exercise {
     explanation?: string;
     correctResponses?: string[];
     wrongResponses?: string[];
+    frontCodeSnippet: CodeSnippet;
+    backCodeSnippet: CodeSnippet;
+}
+
+export interface CodeSnippet {
+    key: string;
+    languages: string[];
 }
 
 export class ExerciseTypes {

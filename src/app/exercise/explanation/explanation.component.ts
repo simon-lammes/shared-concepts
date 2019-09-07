@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {Exercise} from '../exercise.model';
 
 @Component({
@@ -6,14 +6,11 @@ import {Exercise} from '../exercise.model';
     templateUrl: './explanation.component.html',
     styleUrls: ['./explanation.component.scss'],
 })
-export class ExplanationComponent implements OnInit {
+export class ExplanationComponent {
 
     @Input() exercise: Exercise;
+    @Input() backCodeSnippetMarkdown: string;
 
     constructor() {
     }
-
-    ngOnInit() {
-    }
-
 }
