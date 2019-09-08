@@ -33,20 +33,12 @@ export class SettingsService {
         }
         return this.db.doc<SharedConceptSettings>(`settings/${userId}`).valueChanges().pipe(
             map(settings => {
-                const settingsDoNotYetExist = !settings;
-                if (settingsDoNotYetExist) {
-                    return defaultSettings();
-                }
-                if (!settings.disabledExerciseTypes) {
-                    settings.disabledExerciseTypes = [];
-                }
-                if (!settings.conceptKeysOfDisabledExercises) {
-                    settings.conceptKeysOfDisabledExercises = [];
-                }
-                if (!settings.cooldownTime) {
-                    settings.cooldownTime = defaultSettings().cooldownTime;
-                }
-                return settings;
+                return {
+                    ...defaultSettings(),
+                    // We override the default settings with the settings we fetched.
+                    // This way, we can be sure that all properties of the returned settings are set.
+                    ...settings
+                };
             })
         );
     }

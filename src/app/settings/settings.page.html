@@ -97,6 +97,20 @@
             </ion-row>
             <ion-row>
                 <ion-col size="12" size-sm="8" offset-sm="2">
+                    <ion-list>
+                        <ion-list-header>
+                            Advanced
+                        </ion-list-header>
+                        <ion-item>
+                            <ion-label>Editor Mode</ion-label>
+                            <ion-toggle formControlName="editorMode" slot="end"
+                                        (ionChange)="updateSettings()"></ion-toggle>
+                        </ion-item>
+                    </ion-list>
+                </ion-col>
+            </ion-row>
+            <ion-row>
+                <ion-col size="12" size-sm="8" offset-sm="2">
                     <ion-button expand="block" size="large" (click)="onClearConceptStateRequested()">
                         Clear Concept State
                     </ion-button>

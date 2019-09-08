@@ -8,6 +8,8 @@ import {ConceptState} from './concept.state';
 import {ChooseConceptToStudy, NavigatedToConceptKey, TopLevelConceptsRequested} from './concept.actions';
 import {LoadingController, ModalController} from '@ionic/angular';
 import {environment} from '../../environments/environment.prod';
+import {SettingsService} from '../settings/settings.service';
+import {untilDestroyed} from 'ngx-take-until-destroy';
 
 @Component({
     selector: 'app-concepts',
@@ -21,13 +23,15 @@ export class ConceptsPage implements OnInit, OnDestroy {
     displayedConcepts$: Observable<Concept[]>;
     inspectedConcept$: Observable<Concept>;
     imageUrlOfInspectedConcept$: Observable<string>;
+    displayEditorMode: boolean;
 
     constructor(
         private store: Store,
         private route: ActivatedRoute,
         private router: Router,
         private modalController: ModalController,
-        private loadingController: LoadingController
+        private loadingController: LoadingController,
+        private settingsService: SettingsService
     ) {
     }
 
@@ -62,6 +66,12 @@ export class ConceptsPage implements OnInit, OnDestroy {
                 return `${environment.exerciseURL}/Images/${concept.imageKey}`;
             })
         );
+        // In know that the following 3 lines of code are bad, because the "reactive" way is better.
+        // But somehow chrome froze when I did it the right way.
+        // I found no other way to fix it than to use this imparitive approach.
+        this.settingsService.fetchSettingsForCurrentUser$().pipe(untilDestroyed(this)).subscribe(settings => {
+            this.displayEditorMode = settings.editorMode;
+        });
     }
 
     async studyConcept(chosenConcept: Concept) {

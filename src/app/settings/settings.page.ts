@@ -40,7 +40,8 @@ export class SettingsPage implements OnInit {
                 imageOcclusionActivated: !settings.disabledExerciseTypes.includes('IMAGE_OCCLUSION'),
                 multipleResponseQuestionActivated: !settings.disabledExerciseTypes.includes('MULTIPLE_RESPONSE_QUESTION'),
                 termPromptActivated: !settings.disabledExerciseTypes.includes('TERM_PROMPT'),
-                conceptKeysOfDisabledExercises: this.formBuilder.array([])
+                conceptKeysOfDisabledExercises: this.formBuilder.array([]),
+                editorMode: settings.editorMode
             });
             settings.conceptKeysOfDisabledExercises.sort()
                 .forEach(key => this.conceptKeysOfDisabledExercises.push(this.formBuilder.control(key)));
@@ -55,7 +56,8 @@ export class SettingsPage implements OnInit {
                 days: parseInt(this.settingsForm.value.days, 10),
                 hours: parseInt(this.settingsForm.value.hours, 10),
                 minutes: parseInt(this.settingsForm.value.minutes, 10)
-            }
+            },
+            editorMode: this.settingsForm.value.editorMode
         };
         if (!this.settingsForm.value.imageOcclusionActivated) {
             newSettings.disabledExerciseTypes.push('IMAGE_OCCLUSION');

@@ -2,6 +2,7 @@ export interface SharedConceptSettings {
     cooldownTime: TimeSpan;
     disabledExerciseTypes: string[];
     conceptKeysOfDisabledExercises: string[];
+    editorMode: boolean;
 }
 
 export interface TimeSpan {
@@ -19,7 +20,8 @@ export function defaultSettings() {
     const settings: SharedConceptSettings = {
         cooldownTime,
         conceptKeysOfDisabledExercises: [],
-        disabledExerciseTypes: []
+        disabledExerciseTypes: [],
+        editorMode: false
     };
     return settings;
 }

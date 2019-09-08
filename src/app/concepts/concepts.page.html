@@ -41,7 +41,8 @@
                                     <ion-label>{{ concept.title }}</ion-label>
                                 </ion-item>
                             </ion-list>
-                            <app-add-concept [conceptForWhichTheNewConceptBuildsTheFoundation]="inspectedConcept$ | async"></app-add-concept>
+                            <app-add-concept *ngIf="displayEditorMode"
+                                             [conceptForWhichTheNewConceptBuildsTheFoundation]="inspectedConcept$ | async"></app-add-concept>
                         </p>
                     </ion-card-content>
                 </ion-card>
