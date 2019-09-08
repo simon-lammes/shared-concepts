@@ -40,9 +40,13 @@
               },
               {
                 "input": "src/app/app.scss"
-              }
+              },
+              "node_modules/prismjs/themes/prism-okaidia.css"
             ],
-            "scripts": [],
+            "scripts": [
+              "node_modules/prismjs/prism.js",
+              "node_modules/prismjs/components/prism-javascript.js"
+            ],
             "es5BrowserSupport": true
           },
           "configurations": {
