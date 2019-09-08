@@ -1,5 +1,5 @@
-import {map, withLatestFrom} from 'rxjs/operators';
-import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {combineLatest, Observable} from 'rxjs';
 import {Concept} from './concept.model';
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -46,8 +46,7 @@ export class ConceptsPage implements OnInit, OnDestroy {
                 return conceptMap[conceptKey];
             })
         );
-        this.displayedConcepts$ = this.conceptMap$.pipe(
-            withLatestFrom(this.inspectedConcept$, this.topLevelConceptKeys$),
+        this.displayedConcepts$ = combineLatest([this.conceptMap$, this.inspectedConcept$, this.topLevelConceptKeys$]).pipe(
             map(([conceptMap, inspectedConcept, topLevelConceptKeys]) => {
                 if (!inspectedConcept) {
                     return topLevelConceptKeys.map(key => conceptMap[key]).filter(concept => !!concept);

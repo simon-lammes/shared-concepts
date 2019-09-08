@@ -2,6 +2,8 @@ import {Concept} from './concept.model';
 import {Action, Selector, State, StateContext} from '@ngxs/store';
 import {
     ChooseConceptToStudy,
+    ConceptMarkedAsTopLevelConcept,
+    ConceptUpserted,
     LoadConcept,
     LoadConcepts,
     LoadFoundationConceptsToStudyRecursively,
@@ -32,7 +34,7 @@ export interface ConceptStateModel {
         allConceptsToStudyKeys: {}
     }
 })
-export class ConceptState  {
+export class ConceptState {
 
     constructor(private conceptsService: ConceptsService) {
     }
@@ -167,5 +169,25 @@ export class ConceptState  {
                 return ctx.dispatch(new LoadFoundationConceptsToStudyRecursively(concept));
             })
         );
+    }
+
+    @Action(ConceptUpserted)
+    conceptUpserted(ctx: StateContext<ConceptStateModel>, action: ConceptUpserted) {
+        return ctx.patchState({
+            conceptMap: {
+                ...ctx.getState().conceptMap,
+                [action.concept.key]: action.concept,
+            }
+        });
+    }
+
+    @Action(ConceptMarkedAsTopLevelConcept)
+    conceptMarkedAsTopLevelConcept(ctx: StateContext<ConceptStateModel>, action: ConceptMarkedAsTopLevelConcept) {
+        return ctx.patchState({
+            topLevelConceptKeys: [
+                ...ctx.getState().topLevelConceptKeys,
+                action.concept.key
+            ]
+        });
     }
 }

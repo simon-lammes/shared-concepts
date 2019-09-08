@@ -1,11 +1,12 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule, Routes} from '@angular/router';
 
 import {IonicModule} from '@ionic/angular';
 
 import {ConceptsPage} from './concepts.page';
+import {AddConceptComponent} from './add-concept/add-concept.component';
 
 const routes: Routes = [
     {
@@ -23,10 +24,12 @@ const routes: Routes = [
         CommonModule,
         FormsModule,
         IonicModule,
-        RouterModule.forChild(routes)
+        RouterModule.forChild(routes),
+        ReactiveFormsModule
     ],
     declarations: [
-        ConceptsPage
+        ConceptsPage,
+        AddConceptComponent
     ]
 })
 export class ConceptsPageModule {

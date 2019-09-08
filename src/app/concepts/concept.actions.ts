@@ -38,3 +38,17 @@ export class ChooseConceptToStudy {
     constructor(public concept: Concept) {
     }
 }
+
+export class ConceptUpserted {
+    static readonly type = '[Concept Page] Concept Upserted';
+
+    constructor(public concept: Concept) {
+    }
+}
+
+export class ConceptMarkedAsTopLevelConcept {
+    static readonly type = '[Concept Page] Concept Marked As Top Level Concept';
+
+    constructor(public concept: Concept) {
+    }
+}

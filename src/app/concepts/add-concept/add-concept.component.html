@@ -1,0 +1,13 @@
+<form [formGroup]="newConceptForm" (ngSubmit)="addConcept()" *ngIf="newConceptForm">
+    <ion-item [class.invalid]="controls.conceptTitle.touched && controls.conceptTitle.invalid && conceptTitle.length > 0">
+        <ion-label position="floating">
+            <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+            add foundation concept
+        </ion-label>
+        <ion-input formControlName="conceptTitle" (ionBlur)="addConcept()"></ion-input>
+    </ion-item>
+    <ion-item *ngIf="controls.conceptTitle.touched && controls.conceptTitle.invalid && controls.conceptTitle.errors.minlength">
+        <p>The new concept must at least have a length of {{ minConceptTitleLength }} characters.</p>
+    </ion-item>
+</form>
+
