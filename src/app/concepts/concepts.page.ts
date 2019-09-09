@@ -5,7 +5,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Select, Store} from '@ngxs/store';
 import {ConceptState} from './concept.state';
-import {ChooseConceptToStudy, NavigatedToConceptKey, TopLevelConceptsRequested} from './concept.actions';
+import {ChooseConceptToStudy, ConceptDeleted, NavigatedToConceptKey, TopLevelConceptsRequested} from './concept.actions';
 import {LoadingController, ModalController} from '@ionic/angular';
 import {environment} from '../../environments/environment.prod';
 import {SettingsService} from '../settings/settings.service';
@@ -83,5 +83,9 @@ export class ConceptsPage implements OnInit, OnDestroy {
         this.router.navigateByUrl('/exercise').then(() => {
             loadingElement.dismiss();
         });
+    }
+
+    deleteConcept(concept: Concept) {
+        this.store.dispatch(new ConceptDeleted(concept));
     }
 }

@@ -52,3 +52,10 @@ export class ConceptMarkedAsTopLevelConcept {
     constructor(public concept: Concept) {
     }
 }
+
+export class ConceptDeleted {
+    static readonly type = '[Concept Page] Concept Deleted';
+
+    constructor(public concept: Concept) {
+    }
+}

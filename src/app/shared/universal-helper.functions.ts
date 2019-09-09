@@ -5,3 +5,12 @@ export function shuffle<T>(a: T[]) {
     }
     return a;
 }
+
+export function getArrayCopyWithoutValue<T>(array: T[], excludedValue: T) {
+    const index = array.indexOf(excludedValue);
+    const copy = [...array];
+    if (index > -1) {
+        copy.splice(index, 1);
+    }
+    return copy;
+}

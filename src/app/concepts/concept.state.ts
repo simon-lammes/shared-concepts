@@ -2,6 +2,7 @@ import {Concept} from './concept.model';
 import {Action, Selector, State, StateContext} from '@ngxs/store';
 import {
     ChooseConceptToStudy,
+    ConceptDeleted,
     ConceptMarkedAsTopLevelConcept,
     ConceptUpserted,
     LoadConcept,
@@ -13,6 +14,7 @@ import {
 import {ConceptsService} from './concepts.service';
 import {concatMap, map} from 'rxjs/operators';
 import {of} from 'rxjs';
+import {getArrayCopyWithoutValue} from '../shared/universal-helper.functions';
 
 export interface ConceptStateModel {
     conceptMap: {
@@ -189,5 +191,41 @@ export class ConceptState {
                 action.concept.key
             ]
         });
+    }
+
+    @Action(ConceptDeleted)
+    conceptDeleted(ctx: StateContext<ConceptStateModel>, action: ConceptDeleted) {
+        // deleting the concept itself
+        const deletedConcept = action.concept;
+        ctx.patchState({
+            conceptMap: {
+                ...ctx.getState().conceptMap,
+                [deletedConcept.key]: undefined
+            }
+        });
+        // updating top level concepts if necessary
+        if (ctx.getState().topLevelConceptKeys.includes(deletedConcept.key)) {
+            ctx.patchState({
+                topLevelConceptKeys: getArrayCopyWithoutValue(ctx.getState().topLevelConceptKeys, deletedConcept.key)
+            });
+        }
+        // removing all references to the deleted concept
+        const allConceptsKeys = Object.keys(ctx.getState().conceptMap);
+        const allConcepts = allConceptsKeys.map(key => ctx.getState().conceptMap[key]);
+        for (const concept of allConcepts) {
+            if (!concept || !concept.foundationKeys.includes(deletedConcept.key)) {
+                continue;
+            }
+            const updatedConcept: Concept = {
+                ...concept,
+                foundationKeys: getArrayCopyWithoutValue(concept.foundationKeys, deletedConcept.key)
+            };
+            ctx.patchState({
+                conceptMap: {
+                    ...ctx.getState().conceptMap,
+                    [updatedConcept.key]: updatedConcept,
+                }
+            });
+        }
     }
 }
